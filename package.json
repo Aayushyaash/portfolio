@@ -1,0 +1,26 @@
+{
+  "name": "portfolio-generator",
+  "version": "1.0.0",
+  "description": "Static site generator for personal portfolio",
+  "main": "scripts/build.js",
+  "scripts": {
+    "build:css": "npx postcss src/css/tailwind-input.css -o dist/css/tailwind.css",
+    "build": "node scripts/build.js && npm run build:css",
+    "dev": "npm run build && npx -y serve dist",
+    "clean": "node -e \"require('fs-extra').removeSync('dist')\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs-extra": "^11.1.0",
+    "glob": "^10.3.10",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "postcss-cli": "^11.0.0",
+    "tailwindcss": "^3.4.0"
+  }
+}

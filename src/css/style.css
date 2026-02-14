@@ -1,0 +1,311 @@
+/* Custom Styles derived from code.html template */
+
+body {
+    background-color: #09090b;
+    color: #FAFAFA;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #18181b;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #3F3F46;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #52525B;
+}
+
+.tilt-effect {
+    transform: rotate(-3deg);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tilt-effect:hover {
+    transform: rotate(0deg) scale(1.05);
+}
+
+.skill-tilt:hover {
+    transform: rotate(0deg) translateY(-5px);
+    border-color: var(--accent-color);
+}
+
+.skill-tilt {
+    transform: rotate(2deg);
+    transition: all 0.3s ease-out;
+}
+
+/* Timeline milestone active states */
+.milestone-item.active {
+    border-left-color: var(--accent-color, #FACC15);
+    background-color: #27272a;
+}
+
+.milestone-item.active h4 {
+    color: #FAFAFA;
+}
+
+.milestone-item.active .milestone-org {
+    color: var(--accent-blue-color, #3B82F6);
+}
+
+/* Timeline content pane fade animation */
+.content-pane {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.content-pane.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Disable tilt on small screens where it looks cramped */
+@media (max-width: 767px) {
+    .skill-tilt {
+        transform: none;
+    }
+
+    .skill-tilt:hover {
+        transform: translateY(-3px);
+    }
+
+    .tilt-effect {
+        transform: none;
+    }
+}
+
+/* Mobile drawer (right-side slide panel) */
+.mobile-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 16rem;
+    background-color: #18181b;
+    border-left: 1px solid #3F3F46;
+    z-index: 60;
+    padding-top: 3.5rem;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.mobile-drawer.open {
+    transform: translateX(0);
+}
+
+.mobile-drawer-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: #A1A1AA;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.mobile-drawer-close:hover {
+    color: #FAFAFA;
+}
+
+.mobile-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 55;
+}
+
+/* Desktop: revert drawer to normal sidebar layout */
+@media (min-width: 768px) {
+    .mobile-drawer {
+        position: static;
+        width: auto;
+        border-left: none;
+        z-index: auto;
+        padding-top: 0;
+        transform: none;
+        transition: none;
+        overflow-y: visible;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .mobile-backdrop {
+        display: none !important;
+    }
+}
+
+/* Inline timeline panes (mobile accordion) */
+.inline-content-pane {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.4s ease;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.inline-content-pane.active {
+    max-height: 2000px;
+    opacity: 1;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+/* Desktop: hide inline panes, use right panel instead */
+@media (min-width: 1024px) {
+    .inline-content-pane {
+        display: none !important;
+    }
+}
+
+/* Mobile: hide right panel, use inline accordion */
+@media (max-width: 1023px) {
+    #timeline-content {
+        display: none !important;
+    }
+}
+
+/* Resume page: skill filter tags */
+.skill-tag {
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    border: 1px solid #3F3F46;
+    background-color: #18181b;
+    font-size: 0.875rem;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.skill-tag:hover {
+    border-color: var(--accent-color, #FACC15);
+    color: var(--accent-color, #FACC15);
+}
+
+.skill-tag.active {
+    border-color: var(--accent-color, #FACC15);
+    background-color: rgba(250, 204, 21, 0.1);
+    color: var(--accent-color, #FACC15);
+    box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.5);
+}
+
+/* Resume page: terminal window */
+.terminal-window {
+    background-color: #0C0C0C;
+    border: 1px solid #3F3F46;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Project card: browser-window hover effect */
+.project-window-container {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    border-radius: 1rem;
+    border: 1px solid #3F3F46;
+    background-color: rgba(39, 39, 42, 0.5);
+    transition: border-color 0.5s ease, background-color 0.5s ease;
+}
+
+.group:hover .project-window-container {
+    border-color: rgba(250, 204, 21, 0.3);
+    background-color: rgba(250, 204, 21, 0.08);
+}
+
+.project-browser-window {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #18181b;
+    border: 1px solid #3F3F46;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transform: translateY(6rem);
+    transition: transform 0.7s ease;
+    overflow: hidden;
+}
+
+.group:hover .project-browser-window {
+    transform: translateY(3rem);
+}
+
+/* Resume page: course module timeline dots */
+.course-module {
+    border-left: 2px solid #3F3F46;
+    padding-left: 1.5rem;
+    position: relative;
+    transition: all 0.15s ease;
+}
+
+.course-module:hover {
+    border-left-color: var(--accent-color, #FACC15);
+}
+
+.course-module::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 0;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: #3F3F46;
+}
+
+.course-module:hover::before {
+    background-color: var(--accent-color, #FACC15);
+}
+
+/* Skill card keyboard focus */
+.skill-tilt:focus-visible {
+    outline: 2px solid var(--accent-color, #FACC15);
+    outline-offset: 2px;
+    transform: rotate(0deg) translateY(-5px);
+    border-color: var(--accent-color, #FACC15);
+}
+
+/* Timeline milestone keyboard focus */
+.milestone-item:focus-visible {
+    outline: 2px solid var(--accent-color, #FACC15);
+    outline-offset: -2px;
+    border-left-color: var(--accent-color, #FACC15);
+    background-color: #27272a;
+}
+
+/* Course module keyboard focus */
+.course-module:focus-visible {
+    outline: 2px solid var(--accent-color, #FACC15);
+    outline-offset: 2px;
+    border-left-color: var(--accent-color, #FACC15);
+}

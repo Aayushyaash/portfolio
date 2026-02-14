@@ -1,0 +1,75 @@
+<nav aria-label="Main navigation"
+    class="w-full md:w-64 bg-surface border-b md:border-b-0 md:border-r border-border md:h-screen sticky top-0 md:fixed z-[60] md:flex md:flex-col shrink-0">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[70] focus:px-4 focus:py-2 focus:bg-accent focus:text-black focus:rounded focus:font-bold">Skip to content</a>
+    <div class="p-6">
+        <div class="flex items-center justify-between md:block">
+            <a class="block group" href="{{LOGO_HREF}}">
+                <h1 class="text-2xl font-bold tracking-tight text-white mb-1"><span
+                        class="text-accent profile-name" aria-hidden="true">&#x2588;&#x2588;&#x2588;</span> <span
+                        class="profile-full-name-last" aria-hidden="true">&#x2588;&#x2588;&#x2588;</span></h1>
+                <p class="text-xs text-muted font-mono group-hover:text-accentBlue transition-colors profile-subtitle" aria-hidden="true">
+                    &#x2588;&#x2588;&#x2588;&#x2588;&#x2588;</p>
+            </a>
+            <button class="md:hidden text-muted hover:text-white" id="mobile-nav-toggle"
+                aria-label="Open navigation menu" aria-expanded="false">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+        </div>
+    </div>
+    <div class="mobile-drawer" id="mobile-nav-menu">
+        <button class="mobile-drawer-close md:hidden">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <div class="px-6 flex flex-col space-y-2">
+            <a class="flex items-center space-x-3 px-4 py-3 rounded-lg {{OVERVIEW_ACTIVE}}"
+                href="{{LINK_PREFIX}}#about">
+                <span class="material-symbols-outlined {{OVERVIEW_ICON_CLASS}}">person</span>
+                <span class="font-medium">Overview</span>
+            </a>
+            <a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-muted hover:bg-surfaceHighlight hover:text-white transition-all group"
+                href="{{LINK_PREFIX}}#timeline" id="nav-timeline" style="display: none;">
+                <span class="material-symbols-outlined group-hover:text-accentBlue transition-colors">timeline</span>
+                <span class="font-medium">Timeline</span>
+            </a>
+            <a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-muted hover:bg-surfaceHighlight hover:text-white transition-all group"
+                href="{{LINK_PREFIX}}#projects">
+                <span class="material-symbols-outlined group-hover:text-accentBlue transition-colors">folder_open</span>
+                <span class="font-medium">Projects</span>
+            </a>
+            <a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-muted hover:bg-surfaceHighlight hover:text-white transition-all group"
+                href="{{LINK_PREFIX}}#skills">
+                <span class="material-symbols-outlined group-hover:text-accentBlue transition-colors">code</span>
+                <span class="font-medium">Tech Stack</span>
+            </a>
+            <a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-muted hover:bg-surfaceHighlight hover:text-white transition-all group"
+                href="{{LINK_PREFIX}}#contact">
+                <span class="material-symbols-outlined group-hover:text-accentBlue transition-colors">mail</span>
+                <span class="font-medium">Connect</span>
+            </a>
+            <a class="flex items-center space-x-3 px-4 py-3 rounded-lg {{RESUME_ACTIVE}}" href="{{RESUME_HREF}}">
+                <span class="material-symbols-outlined {{RESUME_ICON_CLASS}}">description</span>
+                <span class="font-medium">Resume</span>
+            </a>
+        </div>
+        <div class="p-6 border-t border-border mt-auto">
+            <div class="flex flex-col space-y-4">
+                <a class="flex items-center space-x-3 text-muted hover:text-white transition-colors social-github"
+                    href="#" aria-label="GitHub profile">
+                    <i class="fab fa-github w-5 text-center"></i>
+                    <span class="text-xs font-mono social-github-label" aria-hidden="true">&#x2588;&#x2588;&#x2588;</span>
+                </a>
+                <a class="flex items-center space-x-3 text-muted hover:text-white transition-colors social-linkedin"
+                    href="#" aria-label="LinkedIn profile">
+                    <i class="fab fa-linkedin w-5 text-center"></i>
+                    <span class="text-xs font-mono social-linkedin-label" aria-hidden="true">&#x2588;&#x2588;&#x2588;</span>
+                </a>
+                <a class="flex items-center space-x-3 text-muted hover:text-white transition-colors social-resume"
+                    href="#">
+                    <i class="fas fa-file-pdf w-5 text-center text-accent"></i>
+                    <span class="text-xs font-mono social-resume-label">Download PDF</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+<div id="mobile-nav-backdrop" class="mobile-backdrop hidden"></div>
