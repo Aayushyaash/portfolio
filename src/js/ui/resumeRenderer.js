@@ -181,7 +181,7 @@ function renderEducation(edu) {
     const coursesHtml = (edu.courses || []).map(course => `
         <div class="course-module group cursor-pointer" tabindex="0" role="button" aria-expanded="false">
             <div class="flex justify-between items-center">
-                <span class="text-sm font-medium text-white group-hover:text-accent">${escapeHtml(course.code)}: ${escapeHtml(course.title)}</span>
+                <span class="text-sm font-medium text-white group-hover:text-accent">${escapeHtml(course.code)}${escapeHtml(course.title)}</span>
                 <span class="material-symbols-outlined text-xs text-muted course-expand-icon">expand_more</span>
             </div>
             <ul class="mt-2 space-y-1 text-xs text-muted list-disc pl-4 hidden course-details">

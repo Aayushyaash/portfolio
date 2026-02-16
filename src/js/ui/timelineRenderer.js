@@ -113,7 +113,7 @@ function renderMilestoneMenu(milestones) {
                  id="menu-${id}" data-id="${id}" tabindex="0" role="button" aria-label="${safeTitle} — ${safeOrg}">
                 <div class="flex justify-between items-start mb-1">
                     <h4 class="font-bold ${isActive ? 'text-white' : 'text-muted'} group-hover:text-accent transition-colors">${safeTitle}</h4>
-                    <span class="text-[10px] font-mono text-muted bg-bg px-1.5 py-0.5 rounded">${safeDate}</span>
+                    <span class="text-[10px] font-mono text-muted bg-bg px-1.5 py-0.5 rounded whitespace-nowrap flex-shrink-0">${safeDate}</span>
                 </div>
                 <p class="text-sm ${isActive ? 'text-accentBlue' : 'text-muted'} group-hover:text-accentBlue font-medium milestone-org">${safeOrg}</p>
                 <p class="text-xs text-muted mt-2 line-clamp-2">${safeSummary}</p>

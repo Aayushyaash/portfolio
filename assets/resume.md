@@ -27,23 +27,17 @@ education:
   school: "Chandigarh University"
   date: "2021 - 2025"
   courses:
-    - code: "CS301"
-      title: "Algorithms & Data Structures"
-      details:
-        - "Asymptotic Analysis (Big O)"
-        - "Graph Theory & BFS/DFS"
-        - "Dynamic Programming"
-    - code: "CS402"
+    - code: ""
       title: "Software Engineering"
       details:
         - "Agile/Scrum Methodologies"
         - "Design Patterns (SOLID)"
         - "CI/CD Pipeline Integration"
-    - code: "CS205"
+    - code: ""
       title: "Database Systems"
       details:
         - "Relational Algebra"
-        - "SQL Optimization"
+        - "SQL"
         - "NoSQL Fundamentals"
   achievements:
     - icon: "emoji_events"

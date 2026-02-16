@@ -24,7 +24,7 @@ export function renderProfile(profile) {
 
     // Update Hero section
     if (profile.hero) {
-        const heroTitleNode = document.querySelector('h1.text-4xl');
+        const heroTitleNode = document.getElementById('hero-title') || document.querySelector('h1.text-4xl');
         if (heroTitleNode) {
             const highlightText = profile.hero.highlight || "Code & Design";
             const titleText = profile.hero.title || "Building the future with";

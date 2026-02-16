@@ -44,15 +44,15 @@ export function renderSkillsFilter(projects, experience, onFilterChange) {
     const uniqueTags = Array.from(uniqueTagsMap.values()).sort();
 
     // 3. Render Tags
-    let html = `<div class="skill-tag active" data-tag="all">All Stack</div>`;
+    let html = `<div class="skill-tag active" data-tag="all" tabindex="0" role="button" aria-pressed="true">All</div>`;
     html += uniqueTags.map(tag =>
-        `<div class="skill-tag" data-tag="${tag}">${tag}</div>`
+        `<div class="skill-tag" data-tag="${tag}" tabindex="0" role="button" aria-pressed="false">${tag}</div>`
     ).join('');
     container.innerHTML = html;
 
     // 4. Listeners
     container.querySelectorAll('.skill-tag').forEach(tagEl => {
-        tagEl.addEventListener('click', () => {
+        const handleInteraction = () => {
             const tag = tagEl.dataset.tag;
             if (tag === 'all') {
                 selectedTags.clear();
@@ -67,6 +67,14 @@ export function renderSkillsFilter(projects, experience, onFilterChange) {
             updateFilterVisuals();
             const filtered = filterContent();
             if (onFilterChange) onFilterChange(filtered.projects, filtered.experience);
+        };
+
+        tagEl.addEventListener('click', handleInteraction);
+        tagEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleInteraction();
+            }
         });
     });
 
@@ -76,16 +84,23 @@ export function renderSkillsFilter(projects, experience, onFilterChange) {
         const allTag = container.querySelector('[data-tag="all"]');
         if (selectedTags.size === 0) {
             allTag.classList.add('active');
-            container.querySelectorAll('.skill-tag:not([data-tag="all"])').forEach(el => el.classList.remove('active'));
+            allTag.setAttribute('aria-pressed', 'true');
+            container.querySelectorAll('.skill-tag:not([data-tag="all"])').forEach(el => {
+                el.classList.remove('active');
+                el.setAttribute('aria-pressed', 'false');
+            });
         } else {
             allTag.classList.remove('active');
             container.querySelectorAll('.skill-tag:not([data-tag="all"])').forEach(el => {
                 if (selectedTags.has(el.dataset.tag)) {
                     el.classList.add('active');
+                    el.setAttribute('aria-pressed', 'true');
                 } else {
                     el.classList.remove('active');
+                    el.setAttribute('aria-pressed', 'false');
                 }
             });
+            allTag.setAttribute('aria-pressed', 'false');
         }
     }
 

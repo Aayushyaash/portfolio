@@ -4,7 +4,7 @@ description: "Local-first RAG system for PDF querying with privacy-focused archi
 tags: ["Python", "FastAPI", "Flask", "Chroma", "PyTorch", "Gemini", "HuggingFace"]
 githubLink: "https://github.com/Aayushyaash/Rag-chatbot"
 externalLink: "#"
-image: "" # Placeholder
+image: ""
 featured: true
 order: 2
 ---

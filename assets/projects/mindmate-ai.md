@@ -4,7 +4,7 @@ description: "Enterprise-grade mental health platform with real-time AI-powered 
 tags: ["Python", "Django", "Redis", "Twilio", "Gemini", "ElevenLabs"]
 githubLink: "https://github.com/Aayushyaash/MindMate-AI"
 externalLink: "#"
-image: "" # Placeholder
+image: "" 
 featured: true
 order: 3
 ---
