@@ -1,7 +1,7 @@
 /**
  * Main application entry point
  */
-import { renderProfile, renderProjects, applyTheme } from './ui/renderer.js';
+import { renderProfile, renderProjects, applyTheme, updateLink } from './ui/renderer.js';
 import { renderResumePage, renderResumeProjects, renderResumeExperience } from './ui/resumeRenderer.js';
 import { renderSkillsFilter } from './ui/filtering.js';
 import { setupNavigation } from './ui/navigation.js';
@@ -76,15 +76,13 @@ async function initApp() {
         }
 
         // 3. Global Updates - Resume download link (single source: resume.md)
+        // 3. Global Updates - Resume download link (single source: resume.md)
         if (data.resume?.resumeFile && data.resume.resumeFile !== '#') {
-            document.querySelectorAll('.social-resume').forEach(el => {
-                el.href = data.resume.resumeFile;
-                el.style.display = '';
-            });
+            updateLink('#nav-social-resume', data.resume.resumeFile);
+            updateLink('#resume-download-btn', data.resume.resumeFile);
         } else {
-            document.querySelectorAll('.social-resume').forEach(el => {
-                el.style.display = 'none';
-            });
+            updateLink('#nav-social-resume', ''); // Hides if url is empty
+            updateLink('#resume-download-btn', '');
         }
 
         // 4. Init Navigation interactions

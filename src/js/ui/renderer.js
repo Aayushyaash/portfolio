@@ -18,13 +18,15 @@ export function renderProfile(profile) {
     const lastName = nameParts.slice(1).join(' ') || "";
 
     // Update Header info
-    setText('.profile-name', firstName);
-    setText('.profile-full-name-last', lastName);
-    setText('.profile-subtitle', profile.subtitle);
+
+    setText('#nav-profile-firstname', firstName);
+    setText('#nav-profile-lastname', lastName);
+    setText('#nav-profile-subtitle', profile.subtitle);
 
     // Update Hero section
     if (profile.hero) {
-        const heroTitleNode = document.getElementById('hero-title') || document.querySelector('h1.text-4xl');
+
+        const heroTitleNode = document.getElementById('hero-title');
         if (heroTitleNode) {
             const highlightText = profile.hero.highlight || "Code & Design";
             const titleText = profile.hero.title || "Building the future with";
@@ -35,25 +37,25 @@ export function renderProfile(profile) {
              `;
         }
     }
-    setText('.hero-bio', profile.bio);
+    setText('#hero-bio', profile.bio);
 
     // Update Colors
     applyTheme(profile);
 
     // Update Stats
-    setText('.stat-experience', profile.experience);
-    setText('.stat-projects', profile.projectsCount);
+    setText('#stat-experience', profile.experience);
+    setText('#stat-projects', profile.projectsCount);
 
     // Update Image
-    const heroImg = document.querySelector('.hero-image');
+    const heroImg = document.querySelector('#hero-profile-img');
     if (heroImg && profile.image) {
         heroImg.src = profile.image;
         heroImg.alt = profile.name;
     }
 
     // Update Footer
-    setText('.footer-year', new Date().getFullYear());
-    const emailLink = document.querySelector('.contact-email');
+    setText('#footer-year', new Date().getFullYear());
+    const emailLink = document.querySelector('#contact-email-btn');
     if (emailLink && profile.social?.email) {
         emailLink.href = `mailto:${profile.social.email}`;
     }
@@ -71,11 +73,11 @@ export function renderProfile(profile) {
 
     // Update Social Sidebar
     if (profile.social) {
-        updateLink('.social-github', profile.social.github);
-        setText('.social-github-label', profile.social.githubLabel);
+        updateLink('#nav-social-github', profile.social.github);
+        setText('#nav-social-github-label', profile.social.githubLabel);
 
-        updateLink('.social-linkedin', profile.social.linkedin);
-        setText('.social-linkedin-label', profile.social.linkedinLabel);
+        updateLink('#nav-social-linkedin', profile.social.linkedin);
+        setText('#nav-social-linkedin-label', profile.social.linkedinLabel);
 
         updateLink('.project-view-github', profile.social.github);
     }
@@ -231,7 +233,7 @@ function setText(selector, value) {
  * @param {string} selector - CSS selector.
  * @param {string} url - URL to set.
  */
-function updateLink(selector, url) {
+export function updateLink(selector, url) {
     const el = document.querySelector(selector);
     if (el && url && url !== '#') {
         el.href = url;

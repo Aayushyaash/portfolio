@@ -1,13 +1,17 @@
 <nav aria-label="Main navigation"
     class="w-full md:w-64 bg-surface border-b md:border-b-0 md:border-r border-border md:h-screen sticky top-0 md:fixed z-[60] md:flex md:flex-col shrink-0">
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[70] focus:px-4 focus:py-2 focus:bg-accent focus:text-black focus:rounded focus:font-bold">Skip to content</a>
+    <a href="#main-content"
+        class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[70] focus:px-4 focus:py-2 focus:bg-accent focus:text-black focus:rounded focus:font-bold">Skip
+        to content</a>
     <div class="p-6">
         <div class="flex items-center justify-between md:block">
             <a class="block group" href="{{LOGO_HREF}}">
-                <h1 class="text-2xl font-bold tracking-tight text-white mb-1"><span
-                        class="text-accent profile-name" aria-hidden="true">&#x2588;&#x2588;&#x2588;</span> <span
-                        class="profile-full-name-last" aria-hidden="true">&#x2588;&#x2588;&#x2588;</span></h1>
-                <p class="text-xs text-muted font-mono group-hover:text-accentBlue transition-colors profile-subtitle" aria-hidden="true">
+                <h1 class="text-2xl font-bold tracking-tight text-white mb-1"><span class="text-accent profile-name"
+                        id="nav-profile-firstname" aria-hidden="true">&#x2588;&#x2588;&#x2588;</span> <span
+                        class="profile-full-name-last" id="nav-profile-lastname"
+                        aria-hidden="true">&#x2588;&#x2588;&#x2588;</span></h1>
+                <p class="text-xs text-muted font-mono group-hover:text-accentBlue transition-colors profile-subtitle"
+                    id="nav-profile-subtitle" aria-hidden="true">
                     &#x2588;&#x2588;&#x2588;&#x2588;&#x2588;</p>
             </a>
             <button class="md:hidden text-muted hover:text-white" id="mobile-nav-toggle"
@@ -54,17 +58,19 @@
         <div class="p-6 border-t border-border mt-auto">
             <div class="flex flex-col space-y-4">
                 <a class="flex items-center space-x-3 text-muted hover:text-white transition-colors social-github"
-                    href="#" aria-label="GitHub profile">
+                    href="#" id="nav-social-github" aria-label="GitHub profile">
                     <i class="fab fa-github w-5 text-center"></i>
-                    <span class="text-xs font-mono social-github-label" aria-hidden="true">&#x2588;&#x2588;&#x2588;</span>
+                    <span class="text-xs font-mono social-github-label" id="nav-social-github-label"
+                        aria-hidden="true">&#x2588;&#x2588;&#x2588;</span>
                 </a>
                 <a class="flex items-center space-x-3 text-muted hover:text-white transition-colors social-linkedin"
-                    href="#" aria-label="LinkedIn profile">
+                    href="#" id="nav-social-linkedin" aria-label="LinkedIn profile">
                     <i class="fab fa-linkedin w-5 text-center"></i>
-                    <span class="text-xs font-mono social-linkedin-label" aria-hidden="true">&#x2588;&#x2588;&#x2588;</span>
+                    <span class="text-xs font-mono social-linkedin-label" id="nav-social-linkedin-label"
+                        aria-hidden="true">&#x2588;&#x2588;&#x2588;</span>
                 </a>
                 <a class="flex items-center space-x-3 text-muted hover:text-white transition-colors social-resume"
-                    href="#">
+                    href="#" id="nav-social-resume">
                     <i class="fas fa-file-pdf w-5 text-center text-accent"></i>
                     <span class="text-xs font-mono social-resume-label">Download PDF</span>
                 </a>
