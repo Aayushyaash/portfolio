@@ -94,6 +94,24 @@ async function build() {
         console.log('Injected nav partial into HTML files.');
     }
 
+    // 2c. Inject shared footer partial
+    const footerPartialPath = path.join(SRC_DIR, 'partials', 'footer.html');
+    if (await fs.pathExists(footerPartialPath)) {
+        const footerContent = await fs.readFile(footerPartialPath, 'utf8');
+        const FOOTER_PLACEHOLDER = '<!-- FOOTER_PARTIAL -->';
+
+        const htmlFiles = ['index.html', 'resume.html'];
+        for (const page of htmlFiles) {
+            const htmlPath = path.join(DIST_DIR, page);
+            let html = await fs.readFile(htmlPath, 'utf8');
+            if (html.includes(FOOTER_PLACEHOLDER)) {
+                html = html.replace(FOOTER_PLACEHOLDER, footerContent);
+                await fs.writeFile(htmlPath, html);
+            }
+        }
+        console.log('Injected footer partial into HTML files.');
+    }
+
     // 3. Copy CSS (exclude tailwind-input.css — only needed at build time) and JS
     await fs.ensureDir(path.join(DIST_DIR, 'css'));
     await fs.copy(path.join(SRC_DIR, 'css', 'style.css'), path.join(DIST_DIR, 'css', 'style.css'));
