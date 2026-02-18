@@ -42,10 +42,25 @@ skills:
   database: "Skill, Skill, Skill."
   devops: "Skill, Skill, Skill."
 
+# Location (Footer Badge)
+location:
+  label: "City, Country"
+  visible: true # Set to false to hide the badge
+  # style:
+  #   background: "#27272a"
+  #   border: "#3F3F46"
+  #   text: "#D1D5DB"
+  #   dot: "#22C55E"
+
 # Availability Status Badge
 availability:
   status: "OPEN TO WORK"
   visible: true # Set to false to hide the badge globally
   # MUST use Hex Code (e.g., #4bf63bff) because opacity is manipulated via JS.
   color: "#4bf63bff" # Hex color for the badge status dot and border
+  # style:
+  #   background: "rgba(59, 130, 246, 0.1)"
+  #   border: "rgba(59, 130, 246, 0.3)"
+  #   text: "#3B82F6"
+  #   dot: "#3B82F6"
 ---
