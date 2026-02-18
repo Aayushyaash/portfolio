@@ -44,7 +44,7 @@ export function renderProfile(profile) {
 
     // Update Stats
     setText('#stat-experience', profile.experience);
-    setText('#stat-projects', profile.projectsCount);
+
 
     // Update Image
     const heroImg = document.querySelector('#hero-profile-img');
@@ -58,6 +58,24 @@ export function renderProfile(profile) {
     const emailLink = document.querySelector('#contact-email-btn');
     if (emailLink && profile.social?.email) {
         emailLink.href = `mailto:${profile.social.email}`;
+    }
+
+    // Update Location Badge
+    const locationBadge = document.getElementById('footer-location-badge');
+    if (locationBadge && profile.location) {
+        setText('#footer-location-text', profile.location.label);
+
+        // Visibility
+        if (profile.location.visible === false) {
+            locationBadge.classList.add('hidden');
+            locationBadge.classList.remove('inline-flex');
+        } else {
+            locationBadge.classList.remove('hidden');
+            locationBadge.classList.add('inline-flex');
+        }
+
+        // Apply Styles
+        applyBadgeStyles(locationBadge, profile.location.style, profile.location.color, 'location');
     }
 
     // Update Skills
@@ -78,6 +96,10 @@ export function renderProfile(profile) {
 
         updateLink('#nav-social-linkedin', profile.social.linkedin);
         setText('#nav-social-linkedin-label', profile.social.linkedinLabel);
+
+        // Update Footer Social Links (Mobile)
+        updateLink('#footer-social-github', profile.social.github);
+        updateLink('#footer-social-linkedin', profile.social.linkedin);
 
         updateLink('.project-view-github', profile.social.github);
     }
@@ -265,8 +287,6 @@ export function applyTheme(profile) {
 function renderAvailability(availability) {
     const badge = document.getElementById('availability-badge');
     const textEl = document.getElementById('availability-text');
-    const dotEl = document.getElementById('availability-dot');
-    const pingEl = document.getElementById('availability-ping');
 
     if (!badge || !availability) {
         if (badge && availability === null) badge.style.display = 'none';
@@ -281,21 +301,53 @@ function renderAvailability(availability) {
         textEl.textContent = availability.status;
     }
 
-    // Colors
-    if (availability.color) {
-        let color = availability.color;
+    // Apply Styles
+    applyBadgeStyles(badge, availability.style, availability.color, 'availability');
+}
 
-        // Normalize color: if 8-digit hex (#RRGGBBAA), strip alpha to apply custom opacities
+/**
+ * Helper to apply badge styles (background, border, text, dot)
+ * @param {HTMLElement} badgeEl 
+ * @param {object} styleConfig 
+ * @param {string} baseColor 
+ * @param {string} type - 'availability' or 'location' (used for ID selection)
+ */
+function applyBadgeStyles(badgeEl, styleConfig, baseColor, type) {
+    if (!badgeEl) return;
+
+    const dotEl = document.getElementById(`${type}-dot`);
+    const pingEl = document.getElementById(`${type}-ping`);
+
+    // 1. Expanded Style Object
+    if (styleConfig) {
+        if (styleConfig.background) badgeEl.style.backgroundColor = styleConfig.background;
+        if (styleConfig.border) badgeEl.style.borderColor = styleConfig.border;
+        if (styleConfig.text) badgeEl.style.color = styleConfig.text;
+
+        if (styleConfig.dot) {
+            if (dotEl) dotEl.style.backgroundColor = styleConfig.dot;
+            if (pingEl) pingEl.style.backgroundColor = styleConfig.dot;
+        }
+        return;
+    }
+
+    // 2. Base Color (Backwards Compatibility / Simple Theme)
+    if (baseColor) {
+        let color = baseColor;
         if (color.startsWith('#') && color.length === 9) {
             color = color.substring(0, 7);
         }
 
-        // Apply styles
-        badge.style.borderColor = `${color}4d`; // ~30% opacity
-        badge.style.color = color;
-        badge.style.backgroundColor = `${color}1a`; // ~10% opacity
+        // Apply derived styles
+        // Note: We use different opacities for availability vs location if we wanted strict separate defaults,
+        // but for "color" prop, we assume the user wants the "tinted" look (Activity style).
+        // If they want solid, they should use 'style' object or we can enforce solid for location here.
 
-        // Dot and ping colors
+        // For consistency with previous logic, 'color' implies the transparent tint style.
+        badgeEl.style.borderColor = `${color}4d`; // ~30%
+        badgeEl.style.color = color;
+        badgeEl.style.backgroundColor = `${color}1a`; // ~10%
+
         if (dotEl) dotEl.style.backgroundColor = color;
         if (pingEl) pingEl.style.backgroundColor = color;
     }

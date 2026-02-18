@@ -1,4 +1,26 @@
 <footer class="pb-6 pt-2 px-6 bg-surface text-center">
-    <p class="text-xs text-muted font-mono">&copy; <span class="footer-year" id="footer-year">2025</span> Aayush Yash
-    </p>
+    <!-- Mobile Social Icons -->
+    <div class="flex md:hidden justify-center space-x-6 mb-4">
+        <a href="#" id="footer-social-github" class="text-muted hover:text-white transition-colors" aria-label="GitHub">
+            <i class="fab fa-github text-2xl"></i>
+        </a>
+        <a href="#" id="footer-social-linkedin" class="text-muted hover:text-white transition-colors"
+            aria-label="LinkedIn">
+            <i class="fab fa-linkedin text-2xl"></i>
+        </a>
+    </div>
+    <div class="flex flex-row flex-wrap justify-center items-center gap-2 text-xs text-muted font-mono">
+        <span>&copy; <span class="footer-year" id="footer-year">2025</span> Aayush Yash</span>
+
+        <!-- Animated Location Badge -->
+        <div id="footer-location-badge"
+            class="hidden inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-border bg-surfaceHighlight text-gray-300 font-bold tracking-wide">
+            <span class="relative flex h-2 w-2">
+                <span id="location-ping"
+                    class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-green-500"></span>
+                <span id="location-dot" class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+            <span id="footer-location-text">Patna, India</span>
+        </div>
+    </div>
 </footer>
