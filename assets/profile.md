@@ -11,11 +11,18 @@ social:
   linkedinLabel: "/in/aayush-yash"
   email: "aayushyaash@outlook.com"
 experience: "Python | FastAPI | Vector DB"
-projectsCount: "4+"
+location:
+  label: "Patna, India"
+  visible: true
+  style:
+    background: "#27272a"
+    border: "#3F3F46"
+    text: "#D1D5DB"
+    dot: "#22C55E"
 image: "./images/profile-pic.jpeg"
 colors:
-  accent: "#FACC15" # Yellow
-  accentBlue: "#3B82F6" # Blue
+  accent: "#FACC15"
+  accentBlue: "#3B82F6"
 hero:
   title: "Rapidly prototyping complex systems with"
   highlight: "Python & Applied AI"
@@ -25,7 +32,11 @@ skills:
   database: "PostgreSQL, SQLite, Redis."
   devops: "Git/GitHub, Google Cloud."
 availability:
-  status: "Patna, India"
+  status: "Open to Relocate / Remote Roles"
   visible: true
-  color: "#3B82F6"
+  style:
+    background: "rgba(31, 41, 55, 0.5)"
+    border: "rgba(55, 65, 81, 0.7)"
+    text: "#9ca3af"
+    dot: "#22c55e"
 ---
