@@ -13,6 +13,18 @@ export function isEmptyLink(url) {
 }
 
 /**
+ * Sanitizes HTML using DOMPurify.
+ * @param {string} html - Potentially unsafe HTML.
+ * @returns {string} Safe HTML.
+ */
+export function sanitize(html) {
+    if (typeof DOMPurify !== 'undefined') {
+        return DOMPurify.sanitize(html);
+    }
+    return escapeHtml(html);
+}
+
+/**
  * Escapes HTML special characters to prevent XSS.
  * @param {string} unsafe - Potentially unsafe string.
  * @returns {string} HTML-safe string.

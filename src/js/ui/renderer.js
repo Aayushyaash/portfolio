@@ -119,18 +119,24 @@ export function renderProjects(projects) {
     const featured = projects.filter(p => p.featured === true);
     const nonFeatured = projects.filter(p => p.featured !== true);
 
-    // Render featured projects as large cards
+    // Render featured projects
     if (featuredContainer) {
-        featuredContainer.innerHTML = featured.length > 0
-            ? featured.map((project, index) => createProjectCard(project, index)).join('')
-            : '';
+        featuredContainer.innerHTML = '';
+        featured.forEach((project, index) => {
+            const card = createProjectCard(project, index);
+            if (card) featuredContainer.appendChild(card);
+        });
     }
 
-    // Render non-featured projects as compact grid
+    // Render non-featured projects
     if (otherSection && otherContainer) {
         if (nonFeatured.length > 0) {
             otherSection.style.display = '';
-            otherContainer.innerHTML = nonFeatured.map(p => createCompactProjectCard(p)).join('');
+            otherContainer.innerHTML = '';
+            nonFeatured.forEach(p => {
+                const card = createCompactProjectCard(p);
+                if (card) otherContainer.appendChild(card);
+            });
         } else {
             otherSection.style.display = 'none';
         }
@@ -144,98 +150,63 @@ export function renderProjects(projects) {
  * @returns {string} HTML string.
  */
 function createProjectCard(project, index) {
+    const template = document.getElementById('project-card-template');
+    if (!template) return null;
+
+    const clone = template.content.cloneNode(true);
     const num = (index + 1).toString().padStart(2, '0');
     const isEven = index % 2 !== 0;
-    const textColClass = "lg:col-span-5 p-6 lg:p-8";
 
-    // Logic for swapping order
-    const imageOrder = isEven ? "order-1 lg:order-2" : "";
-    const textOrder = isEven ? "order-2 lg:order-1" : "";
+    // Layout Order
+    if (isEven) {
+        const imageCol = clone.querySelector('.project-image-col');
+        const textCol = clone.querySelector('.project-text-col');
+        if (imageCol) imageCol.classList.add('lg:order-2');
+        if (textCol) textCol.classList.add('lg:order-1');
+    }
 
-    const tagsHtml = renderTags(project.tags, 'sm');
-    const linksHtml = renderProjectLinks(project.githubLink, project.externalLink, 'text-2xl', 'fa');
+    // Gradient Direction
+    const gradient = clone.querySelector('.project-gradient');
+    if (gradient) {
+        gradient.classList.add(isEven ? 'from-accentBlue/10' : 'from-accent/10');
+    }
 
-    // Escape user content
-    const safeTitle = escapeHtml(project.title);
-    const safeDescription = escapeHtml(project.description);
-    const safeImage = escapeHtml(project.image);
+    // Content
+    clone.querySelector('.project-number').textContent = `${num}. PROJECT`;
+    clone.querySelector('.project-title').textContent = project.title;
+    clone.querySelector('.project-description').textContent = project.description;
 
-    // Gradient direction alternates with layout
-    const gradientDir = isEven ? 'from-accentBlue/10' : 'from-accent/10';
+    // HTML Helpers (safe)
+    clone.querySelector('.project-tags').innerHTML = renderTags(project.tags, 'sm');
+    clone.querySelector('.project-links').innerHTML = renderProjectLinks(project.githubLink, project.externalLink, 'text-2xl', 'fa');
 
-    // Skeleton placeholder HTML (used for no-image and as onerror fallback)
-    const skeletonHtml = `<div class="grid grid-cols-3 gap-4 flex-1">
-                <div class="col-span-2 space-y-3">
-                    <div class="h-4 bg-border/50 rounded w-3/4"></div>
-                    <div class="h-20 bg-border/30 rounded w-full"></div>
-                    <div class="h-12 bg-border/20 rounded w-5/6"></div>
-                </div>
-                <div class="bg-accentBlue/20 rounded-lg"></div>
-            </div>`;
+    // Image
+    const img = clone.querySelector('.project-image');
+    const skeleton = clone.querySelector('.project-skeleton');
 
-    // Browser window inner content: image (with onerror fallback) or skeleton
-    const windowContent = project.image
-        ? `<img src="${safeImage}" alt="${safeTitle}" loading="lazy" class="w-full flex-1 object-cover rounded-lg opacity-80 group-hover:opacity-100 transition-opacity duration-500" onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='';">
-           <div class="hidden">${skeletonHtml}</div>`
-        : skeletonHtml;
+    if (project.image) {
+        img.src = project.image;
+        img.alt = project.title;
+    } else {
+        img.style.display = 'none';
+        if (skeleton) skeleton.classList.remove('hidden');
+    }
 
-    return `
-    <div class="group grid grid-cols-1 lg:grid-cols-12 gap-8 items-center border border-border bg-surface p-1 rounded-2xl hover:border-yellow-400/50 transition-all duration-300">
-        <!-- Image Section with Browser Window Effect -->
-        <div class="lg:col-span-7 ${imageOrder}">
-            <div class="project-window-container">
-                <!-- Yellow glow overlay -->
-                <div class="absolute inset-0 bg-gradient-to-br ${gradientDir} to-transparent pointer-events-none"></div>
-                <!-- Browser Window (slides up on hover) -->
-                <div class="project-browser-window">
-                    <div class="flex items-center gap-2 mb-4 shrink-0">
-                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                    </div>
-                    ${windowContent}
-                </div>
-            </div>
-        </div>
-
-        <!-- Text Section -->
-        <div class="${textColClass} ${textOrder}">
-            <div class="text-accentBlue font-mono text-sm mb-2">${num}. PROJECT</div>
-            <h3 class="text-2xl font-bold text-white mb-4 group-hover:text-accent transition-colors">${safeTitle}</h3>
-            <p class="text-gray-400 mb-6 leading-relaxed">${safeDescription}</p>
-            <div class="flex flex-wrap gap-2 mb-8 font-mono text-xs text-gray-300">
-                ${tagsHtml}
-            </div>
-            <div class="flex items-center gap-4">
-                ${linksHtml}
-            </div>
-        </div>
-    </div>
-    `;
+    return clone;
 }
 
-/**
- * Creates HTML for a compact project card (non-featured).
- * @param {object} project - Project data.
- * @returns {string} HTML string.
- */
 function createCompactProjectCard(project) {
-    const tagsHtml = renderTags(project.tags, 'xs');
-    const linksHtml = renderProjectLinks(project.githubLink, project.externalLink, 'text-lg', 'fa');
+    const template = document.getElementById('compact-project-card-template');
+    if (!template) return null;
 
-    const safeTitle = escapeHtml(project.title);
-    const safeDescription = escapeHtml(project.description);
+    const clone = template.content.cloneNode(true);
 
-    return `
-    <div class="bg-surface border border-border p-6 rounded-xl hover:border-yellow-400/50 transition-all group flex flex-col">
-        <div class="flex justify-between items-start mb-3">
-            <span class="material-symbols-outlined text-muted text-2xl">folder_open</span>
-            <div class="flex gap-3">${linksHtml}</div>
-        </div>
-        <h4 class="text-lg font-bold text-white mb-2 group-hover:text-accent transition-colors">${safeTitle}</h4>
-        <p class="text-sm text-muted mb-4 line-clamp-3 flex-1">${safeDescription}</p>
-        <div class="flex flex-wrap gap-2 mt-auto">${tagsHtml}</div>
-    </div>`;
+    clone.querySelector('.project-title').textContent = project.title;
+    clone.querySelector('.project-description').textContent = project.description;
+    clone.querySelector('.project-tags').innerHTML = renderTags(project.tags, 'xs');
+    clone.querySelector('.project-links').innerHTML = renderProjectLinks(project.githubLink, project.externalLink, 'text-lg', 'fa');
+
+    return clone;
 }
 
 // Helpers

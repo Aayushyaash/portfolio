@@ -27,6 +27,7 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
     <link href="./css/style.css" rel="stylesheet" />
+    <script src="./js/vendor/purify.min.js"></script>
 </head>
 
 <body class="font-sans antialiased overflow-x-hidden flex flex-col md:flex-row min-h-screen">
@@ -126,6 +127,70 @@
         </section>
         <!-- FOOTER_PARTIAL -->
     </main>
+    <!-- Templates -->
+    <template id="resume-project-template">
+        <div
+            class="bg-surface border border-border p-5 rounded-lg group hover:border-yellow-400/50 transition-all project-card">
+            <div class="flex justify-between items-start mb-2">
+                <h4 class="font-bold text-white group-hover:text-accent transition-colors project-title"></h4>
+                <div class="flex gap-3 items-center project-links"></div>
+            </div>
+            <p class="text-sm text-muted mb-4 project-description"></p>
+            <div class="flex flex-wrap gap-2 project-tags"></div>
+        </div>
+    </template>
+
+    <template id="experience-item-template">
+        <div class="relative pl-8 border-l border-border experience-item">
+            <div class="experience-dot absolute -left-[5px] top-1 w-2 h-2 rounded-full bg-border"></div>
+            <div class="mb-1 flex justify-between items-start">
+                <div>
+                    <h4 class="text-lg font-bold text-white experience-title"></h4>
+                    <p class="text-sm text-accentBlue font-medium experience-company"></p>
+                </div>
+                <span class="text-xs font-mono text-muted px-2 py-1 bg-surfaceHighlight rounded experience-date"></span>
+            </div>
+            <p class="text-sm text-muted mt-3 mb-4 experience-description"></p>
+            <div class="flex gap-2 experience-tags"></div>
+        </div>
+    </template>
+
+    <template id="education-template">
+        <div class="education-block">
+            <div class="mb-6">
+                <h4 class="text-lg font-bold text-white edu-degree"></h4>
+                <p class="text-sm text-muted edu-school-date"></p>
+            </div>
+            <div class="space-y-6">
+                <p class="text-xs font-mono text-accent uppercase tracking-widest font-bold">Relevant Coursework</p>
+                <div class="edu-courses-container"></div>
+            </div>
+            <div class="mt-8 pt-6 border-t border-border">
+                <p class="text-xs font-mono text-muted mb-4 uppercase">Achievements</p>
+                <div class="edu-achievements-container"></div>
+            </div>
+        </div>
+    </template>
+
+    <template id="course-item-template">
+        <div class="course-module group cursor-pointer" tabindex="0" role="button" aria-expanded="false">
+            <div class="flex justify-between items-center">
+                <span class="text-sm font-medium text-white group-hover:text-accent course-title"></span>
+                <span class="material-symbols-outlined text-xs text-muted course-expand-icon">expand_more</span>
+            </div>
+            <ul class="mt-2 space-y-1 text-xs text-muted list-disc pl-4 hidden course-details"></ul>
+        </div>
+    </template>
+
+    <template id="achievement-item-template">
+        <div class="flex items-center gap-3 mb-3 achievement-item">
+            <div class="w-8 h-8 rounded-full bg-yellow-400/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-accent text-sm achievement-icon"></span>
+            </div>
+            <span class="text-xs text-gray-300 achievement-text"></span>
+        </div>
+    </template>
+
     <script type="module" src="./js/main.js"></script>
 </body>
 

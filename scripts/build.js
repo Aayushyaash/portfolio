@@ -1,34 +1,26 @@
 const fs = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
-const yaml = require('js-yaml');
+const matter = require('gray-matter');
 
 const SRC_DIR = path.join(__dirname, '../src');
 const ASSETS_DIR = path.join(__dirname, '../assets');
 const DIST_DIR = path.join(__dirname, '../dist');
 
 /**
- * Parses a markdown file with YAML frontmatter.
+ * Parses a markdown file with YAML frontmatter using gray-matter.
  * @param {string} filePath - Path to the markdown file.
  * @returns {object} - The parsed frontmatter and content.
  */
 function parseMarkdown(filePath) {
     const fileContent = fs.readFileSync(filePath, 'utf8');
-    const match = fileContent.match(/^---\s*[\r\n]+([\s\S]+?)[\r\n]+---\s*[\r\n]+([\s\S]*)$/);
-
-    if (match) {
-        try {
-            const frontmatter = yaml.load(match[1]);
-            // Note: 'content' is the Markdown body below the frontmatter.
-            // Currently unused by renderers but preserved for future use (e.g., project detail pages/modals).
-            const content = match[2].trim();
-            return { ...frontmatter, content };
-        } catch (e) {
-            console.error(`Error parsing YAML in ${filePath}:`, e);
-            return null;
-        }
+    try {
+        const { data, content } = matter(fileContent);
+        return { ...data, content: content.trim() };
+    } catch (e) {
+        console.error(`Error parsing frontmatter in ${filePath}:`, e);
+        return null;
     }
-    return { content: fileContent.trim() };
 }
 
 /**
@@ -53,10 +45,17 @@ async function build() {
         const navTemplate = await fs.readFile(navPartialPath, 'utf8');
         const NAV_PLACEHOLDER = '<!-- NAV_PARTIAL -->';
 
-        const ACTIVE_CLASSES = 'bg-surfaceHighlight/50 text-white border-l-4 border-accent';
-        const INACTIVE_CLASSES = 'text-muted hover:bg-surfaceHighlight hover:text-white transition-all group';
-        const ACTIVE_ICON = 'text-accent';
-        const INACTIVE_ICON = 'group-hover:text-accentBlue transition-colors';
+        const NAV_THEME = {
+            activeClasses: 'bg-surfaceHighlight/50 text-white border-l-4 border-accent',
+            inactiveClasses: 'text-muted hover:bg-surfaceHighlight hover:text-white transition-all group',
+            activeIcon: 'text-accent',
+            inactiveIcon: 'group-hover:text-accentBlue transition-colors'
+        };
+
+        const ACTIVE_CLASSES = NAV_THEME.activeClasses;
+        const INACTIVE_CLASSES = NAV_THEME.inactiveClasses;
+        const ACTIVE_ICON = NAV_THEME.activeIcon;
+        const INACTIVE_ICON = NAV_THEME.inactiveIcon;
 
         const pageConfigs = {
             'index.html': {
@@ -67,6 +66,9 @@ async function build() {
                 RESUME_ACTIVE: INACTIVE_CLASSES,
                 RESUME_ICON_CLASS: INACTIVE_ICON,
                 RESUME_HREF: 'resume.html',
+                TIMELINE_ACTIVE: INACTIVE_CLASSES,
+                TIMELINE_ICON_CLASS: INACTIVE_ICON,
+                TIMELINE_HREF: '#timeline'
             },
             'resume.html': {
                 LOGO_HREF: 'index.html',
@@ -76,6 +78,9 @@ async function build() {
                 RESUME_ACTIVE: ACTIVE_CLASSES,
                 RESUME_ICON_CLASS: ACTIVE_ICON,
                 RESUME_HREF: '#',
+                TIMELINE_ACTIVE: INACTIVE_CLASSES,
+                TIMELINE_ICON_CLASS: INACTIVE_ICON,
+                TIMELINE_HREF: 'index.html#timeline'
             },
         };
 
@@ -115,8 +120,26 @@ async function build() {
     // 3. Copy CSS (exclude tailwind-input.css — only needed at build time) and JS
     await fs.ensureDir(path.join(DIST_DIR, 'css'));
     await fs.copy(path.join(SRC_DIR, 'css', 'style.css'), path.join(DIST_DIR, 'css', 'style.css'));
-    await fs.copy(path.join(SRC_DIR, 'js'), path.join(DIST_DIR, 'js'));
-    console.log('Copied CSS and JS.');
+
+    // Copy JS files explicitly (recursive)
+    const jsFiles = glob.sync('**/*.js', { cwd: path.join(SRC_DIR, 'js') });
+    await fs.ensureDir(path.join(DIST_DIR, 'js'));
+    for (const file of jsFiles) {
+        const srcPath = path.join(SRC_DIR, 'js', file);
+        const destPath = path.join(DIST_DIR, 'js', file);
+        await fs.ensureDir(path.dirname(destPath));
+        await fs.copy(srcPath, destPath);
+    }
+    console.log(`Copied ${jsFiles.length} JS files.`);
+
+    // 3b. Copy Vendor JS (DOMPurify)
+    const vendorDir = path.join(DIST_DIR, 'js', 'vendor');
+    await fs.ensureDir(vendorDir);
+    await fs.copy(
+        path.join(__dirname, '../node_modules/dompurify/dist/purify.min.js'),
+        path.join(vendorDir, 'purify.min.js')
+    );
+    console.log('Copied CSS, JS, and Vendor assets.');
 
     // 4. Copy Images
     const imagesDir = path.join(DIST_DIR, 'images');

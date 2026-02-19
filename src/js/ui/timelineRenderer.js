@@ -3,7 +3,7 @@
  * Renders the interactive timeline section from timeline.md data.
  */
 
-import { escapeHtml, isEmptyLink } from '../utils/htmlHelpers.js';
+import { escapeHtml, isEmptyLink, sanitize } from '../utils/htmlHelpers.js';
 
 /**
  * Color mapping for milestone type badges, box items, and icons.
@@ -95,36 +95,63 @@ export function setupMilestoneInteraction() {
  * Renders the left panel milestone menu items.
  * @param {Array} milestones - Array of milestone objects.
  */
+/**
+ * Renders the left panel milestone menu items.
+ * @param {Array} milestones - Array of milestone objects.
+ */
 function renderMilestoneMenu(milestones) {
     const menu = document.getElementById('timeline-menu');
     if (!menu) return;
 
-    menu.innerHTML = milestones.map((m, i) => {
+    menu.innerHTML = '';
+    const template = document.getElementById('timeline-menu-item-template');
+    if (!template) return;
+
+    milestones.forEach((m, i) => {
         const id = i + 1;
         const isActive = i === 0;
-        const safeTitle = escapeHtml(m.title);
-        const safeOrg = escapeHtml(m.organization);
-        const safeSummary = escapeHtml(m.summary);
-        const safeDate = escapeHtml(m.date);
         const colors = COLOR_MAP[m.typeColor] || COLOR_MAP.accent;
 
-        return `
-            <div class="milestone-item ${isActive ? 'active' : ''} p-4 cursor-pointer hover:bg-surfaceHighlight transition-colors rounded-r-lg border-l-4 ${isActive ? 'border-accent bg-surfaceHighlight' : 'border-transparent'} group"
-                 id="menu-${id}" data-id="${id}" tabindex="0" role="button" aria-label="${safeTitle} — ${safeOrg}">
-                <div class="flex justify-between items-start mb-1">
-                    <h4 class="font-bold ${isActive ? 'text-white' : 'text-muted'} group-hover:text-accent transition-colors">${safeTitle}</h4>
-                    <span class="text-[10px] font-mono text-muted bg-bg px-1.5 py-0.5 rounded whitespace-nowrap flex-shrink-0">${safeDate}</span>
-                </div>
-                <p class="text-sm ${isActive ? 'text-accentBlue' : 'text-muted'} group-hover:text-accentBlue font-medium milestone-org">${safeOrg}</p>
-                <p class="text-xs text-muted mt-2 line-clamp-2">${safeSummary}</p>
-            </div>
-            <div class="inline-content-pane ${isActive ? 'active' : ''} bg-bg px-6" id="inline-pane-${id}">
-                ${renderMilestonePaneContent(m, colors)}
-            </div>
-        `;
-    }).join('');
+        const clone = template.content.cloneNode(true);
+        const group = clone.querySelector('.timeline-menu-group');
+        const item = clone.querySelector('.milestone-item');
+        const inlinePane = clone.querySelector('.inline-content-pane');
+
+        // Set IDs and Data Attributes
+        item.id = `menu-${id}`;
+        item.dataset.id = id;
+        item.setAttribute('aria-label', `${m.title} — ${m.organization}`);
+        inlinePane.id = `inline-pane-${id}`;
+
+        // Content
+        clone.querySelector('.milestone-title').textContent = m.title;
+        clone.querySelector('.milestone-date').textContent = m.date;
+        clone.querySelector('.milestone-org').textContent = m.organization;
+        clone.querySelector('.milestone-summary').textContent = m.summary;
+
+        // Active State Styling (Initial)
+        if (isActive) {
+            item.classList.add('active', 'border-accent', 'bg-surfaceHighlight');
+            item.classList.remove('border-transparent');
+            clone.querySelector('.milestone-title').classList.replace('text-muted', 'text-white');
+            clone.querySelector('.milestone-org').classList.replace('text-muted', 'text-accentBlue');
+            inlinePane.classList.add('active'); // Open first item on mobile by default? Logic says yes.
+        } else {
+            // Ensure defaults
+        }
+
+        // Render Inline Content (for mobile accordion)
+        // We reuse the same content generation logic but append to inline pane
+        renderMilestonePaneContent(inlinePane, m, colors);
+
+        menu.appendChild(clone);
+    });
 }
 
+/**
+ * Renders the right panel content panes for all milestones.
+ * @param {Array} milestones - Array of milestone objects.
+ */
 /**
  * Renders the right panel content panes for all milestones.
  * @param {Array} milestones - Array of milestone objects.
@@ -132,8 +159,27 @@ function renderMilestoneMenu(milestones) {
 function renderMilestoneContent(milestones) {
     const content = document.getElementById('timeline-content');
     if (!content) return;
+    content.innerHTML = '';
 
-    content.innerHTML = milestones.map((m, i) => renderMilestonePane(m, i)).join('');
+    const template = document.getElementById('timeline-pane-template');
+    if (!template) return;
+
+    milestones.forEach((m, i) => {
+        const id = i + 1;
+        const isActive = i === 0;
+        const colors = COLOR_MAP[m.typeColor] || COLOR_MAP.accent;
+
+        const clone = template.content.cloneNode(true);
+        const pane = clone.querySelector('.content-pane');
+
+        pane.id = `pane-${id}`;
+        if (isActive) pane.classList.remove('hidden'); // Logic differs slightly from CSS class 'active', ensure compatibility
+
+        // We need to render the INNER content into this pane
+        renderMilestonePaneContent(pane, m, colors);
+
+        content.appendChild(clone);
+    });
 }
 
 /**
@@ -142,99 +188,100 @@ function renderMilestoneContent(milestones) {
  * @param {object} colors - Color mapping for this milestone.
  * @returns {string} HTML string.
  */
-function renderMilestonePaneContent(milestone, colors) {
-    const safeType = escapeHtml(milestone.type);
-    const safeDateRange = escapeHtml(milestone.dateRange);
-    const safeTitle = escapeHtml(milestone.title);
-    const safeOrg = escapeHtml(milestone.organization);
-    const safeOrgIcon = escapeHtml(milestone.organizationIcon);
-    const safeDescription = escapeHtml(milestone.description);
-
-    const leftBoxHtml = renderBox(milestone.leftBox, colors);
-    const rightBoxHtml = renderBox(milestone.rightBox, colors);
-    const linksHtml = renderLinks(milestone.links);
-
-    return `
-        <div class="flex items-center gap-3 mb-6">
-            <span class="px-3 py-1 ${colors.badge} text-xs font-bold rounded-full border">${safeType}</span>
-            <span class="h-px w-12 bg-border"></span>
-            <span class="text-xs font-mono text-muted">${safeDateRange}</span>
-        </div>
-        <h2 class="text-3xl font-bold text-white mb-2">${safeTitle}</h2>
-        <div class="text-accentBlue flex items-center gap-1 mb-8">
-            <span class="material-symbols-outlined text-lg">${safeOrgIcon}</span> ${safeOrg}
-        </div>
-        <div class="prose prose-invert max-w-none mb-10">
-            <p class="text-gray-300 leading-relaxed">${safeDescription}</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-            ${leftBoxHtml}
-            ${rightBoxHtml}
-        </div>
-        ${linksHtml}
-    `;
-}
-
 /**
- * Renders a single milestone content pane.
+ * Renders the inner content of a milestone pane (without wrapper).
+ * Appends to presentation container.
+ * @param {HTMLElement} container - Container to append to.
  * @param {object} milestone - Milestone data object.
- * @param {number} index - Zero-based index.
- * @returns {string} HTML string.
+ * @param {object} colors - Color mapping for this milestone.
  */
-function renderMilestonePane(milestone, index) {
-    const id = index + 1;
-    const isActive = index === 0;
-    const colors = COLOR_MAP[milestone.typeColor] || COLOR_MAP.accent;
+function renderMilestonePaneContent(container, milestone, colors) {
+    const template = document.getElementById('timeline-inner-content-template');
+    if (!template) return;
 
-    return `
-        <div class="content-pane ${isActive ? 'active' : ''}" id="pane-${id}">
-            ${renderMilestonePaneContent(milestone, colors)}
-        </div>
-    `;
+    const clone = template.content.cloneNode(true);
+
+    // Header
+    const typeEl = clone.querySelector('.milestone-type');
+    typeEl.className = `milestone-type px-3 py-1 text-xs font-bold rounded-full border ${colors.badge}`;
+    typeEl.textContent = milestone.type;
+
+    clone.querySelector('.milestone-date-range').textContent = milestone.dateRange;
+    clone.querySelector('.milestone-full-title').textContent = milestone.title;
+
+    clone.querySelector('.milestone-org-icon').textContent = milestone.organizationIcon;
+    clone.querySelector('.milestone-org-name').textContent = milestone.organization;
+
+    // Description (Safe HTML)
+    clone.querySelector('.milestone-description').innerHTML = sanitize(milestone.description);
+
+    // Boxes
+    const boxesContainer = clone.querySelector('.milestone-boxes');
+    renderBox(boxesContainer, milestone.leftBox, colors);
+    renderBox(boxesContainer, milestone.rightBox, colors);
+
+    // Links
+    const linksSection = clone.querySelector('.milestone-links');
+    const linksContainer = clone.querySelector('.links-container');
+    renderLinks(linksContainer, milestone.links);
+
+    if (milestone.links && milestone.links.length > 0 && linksContainer.hasChildNodes()) {
+        linksSection.classList.remove('hidden');
+    }
+
+    container.appendChild(clone);
 }
 
 /**
  * Renders a detail box (left or right) within a content pane.
- * @param {object} box - Box data with title, icon, iconColor, items, isList.
- * @param {object} colors - Color mapping for tags.
- * @returns {string} HTML string.
+ * @param {HTMLElement} container
+ * @param {object} box
+ * @param {object} colors
  */
-function renderBox(box, colors) {
-    if (!box) return '';
+function renderBox(container, box, colors) {
+    if (!box) return;
 
-    const safeTitle = escapeHtml(box.title);
-    const safeIcon = escapeHtml(box.icon);
-    // Resolve icon color via COLOR_MAP to avoid dynamic Tailwind class construction
+    const template = document.getElementById('timeline-box-template');
+    if (!template) return;
+
+    const clone = template.content.cloneNode(true);
+
+    // Icon Color Logic
     const iconColorKey = box.iconColor || 'accent';
     const iconClass = (COLOR_MAP[iconColorKey] || colors).icon || colors.icon;
 
-    let itemsHtml = '';
+    const iconEl = clone.querySelector('.box-icon');
+    iconEl.className = `material-symbols-outlined box-icon text-lg ${iconClass}`;
+    iconEl.textContent = box.icon;
+
+    clone.querySelector('.box-title-text').textContent = box.title;
+
+    // Items
+    const contentDiv = clone.querySelector('.box-content');
     if (box.items && Array.isArray(box.items)) {
         if (box.isList) {
-            // Render as bullet list
-            itemsHtml = `
-                <ul class="text-xs text-gray-400 space-y-2 list-disc pl-4">
-                    ${box.items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}
-                </ul>
-            `;
+            const ul = document.createElement('ul');
+            ul.className = 'text-xs text-gray-400 space-y-2 list-disc pl-4';
+            box.items.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                ul.appendChild(li);
+            });
+            contentDiv.appendChild(ul);
         } else {
-            // Render as tag badges
-            itemsHtml = `
-                <div class="flex flex-wrap gap-2">
-                    ${box.items.map(item => `<span class="px-2 py-1 ${colors.tag} text-xs rounded border">${escapeHtml(item)}</span>`).join('')}
-                </div>
-            `;
+            const div = document.createElement('div');
+            div.className = 'flex flex-wrap gap-2';
+            box.items.forEach(item => {
+                const span = document.createElement('span');
+                span.className = `px-2 py-1 ${colors.tag} text-xs rounded border`;
+                span.textContent = item;
+                div.appendChild(span);
+            });
+            contentDiv.appendChild(div);
         }
     }
 
-    return `
-        <div class="bg-surface border border-border p-5 rounded-xl">
-            <h4 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
-                <span class="material-symbols-outlined ${iconClass} text-lg">${safeIcon}</span> ${safeTitle}
-            </h4>
-            ${itemsHtml}
-        </div>
-    `;
+    container.appendChild(clone);
 }
 
 /**
@@ -242,40 +289,38 @@ function renderBox(box, colors) {
  * @param {Array} links - Array of link objects with label, icon, iconType, url.
  * @returns {string} HTML string.
  */
-function renderLinks(links) {
-    if (!links || !Array.isArray(links) || links.length === 0) return '';
+/**
+ * Renders the links section at the bottom of a content pane.
+ * @param {HTMLElement} container
+ * @param {Array} links
+ */
+function renderLinks(container, links) {
+    if (!links || !Array.isArray(links) || links.length === 0) return;
 
     const validLinks = links.filter(link => !isEmptyLink(link.url));
-    if (validLinks.length === 0) return '';
+    if (validLinks.length === 0) return;
 
-    const linksHtml = validLinks.map(link => {
-        const safeLabel = escapeHtml(link.label);
-        const safeUrl = escapeHtml(link.url);
-        const safeIcon = escapeHtml(link.icon);
+    validLinks.forEach(link => {
+        const a = document.createElement('a');
+        a.className = 'flex items-center gap-2 text-sm text-white bg-surfaceHighlight hover:bg-surface border border-border px-4 py-2 rounded-lg transition-all';
+        a.href = link.url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
 
-        let iconHtml = '';
         if (link.iconType === 'fa') {
-            iconHtml = `<i class="fab ${safeIcon}"></i>`;
+            const i = document.createElement('i');
+            i.className = `fab ${link.icon}`;
+            a.appendChild(i);
         } else {
-            iconHtml = `<span class="material-symbols-outlined text-sm">${safeIcon}</span>`;
+            const span = document.createElement('span');
+            span.className = 'material-symbols-outlined text-sm';
+            span.textContent = link.icon;
+            a.appendChild(span);
         }
 
-        return `
-            <a class="flex items-center gap-2 text-sm text-white bg-surfaceHighlight hover:bg-surface border border-border px-4 py-2 rounded-lg transition-all"
-               href="${safeUrl}" target="_blank" rel="noopener noreferrer">
-                ${iconHtml} ${safeLabel}
-            </a>
-        `;
-    }).join('');
-
-    return `
-        <div class="border-t border-border pt-8">
-            <h4 class="text-xs font-mono font-bold text-muted uppercase tracking-widest mb-4">Related Project Links</h4>
-            <div class="flex gap-4">
-                ${linksHtml}
-            </div>
-        </div>
-    `;
+        a.appendChild(document.createTextNode(' ' + link.label));
+        container.appendChild(a);
+    });
 }
 
 /**
