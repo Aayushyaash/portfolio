@@ -3,8 +3,10 @@
  * Handles scroll spy, active link highlighting, and mobile nav toggle.
  */
 
-const NAV_ACTIVE_CLASSES = ['bg-surfaceHighlight/50', 'text-white', 'border-l-4', 'border-accent'];
-const NAV_INACTIVE_CLASSES = ['text-muted', 'hover:bg-surfaceHighlight', 'hover:text-white'];
+// Use injected theme or fallback
+const theme = window.PORTFOLIO_THEME?.nav || {};
+const NAV_ACTIVE_CLASSES = theme.activeClasses || ['bg-surfaceHighlight/50', 'text-white', 'border-l-4', 'border-accent'];
+const NAV_INACTIVE_CLASSES = theme.inactiveClasses || ['text-muted', 'hover:bg-surfaceHighlight', 'hover:text-white'];
 
 let rafId = null;
 

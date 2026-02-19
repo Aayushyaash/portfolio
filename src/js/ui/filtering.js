@@ -4,8 +4,11 @@
  * State is encapsulated within the renderSkillsFilter closure.
  */
 
+import { escapeHtml } from '../utils/htmlHelpers.js';
+
 /**
  * Renders the interactive skills filter.
+
  * @param {Array} projects - List of project objects.
  * @param {Object} experience - Experience data object.
  * @param {Function} onFilterChange - Callback function when filter changes (receives filtered data).
@@ -46,7 +49,7 @@ export function renderSkillsFilter(projects, experience, onFilterChange) {
     // 3. Render Tags
     let html = `<div class="skill-tag active" data-tag="all" tabindex="0" role="button" aria-pressed="true">All</div>`;
     html += uniqueTags.map(tag =>
-        `<div class="skill-tag" data-tag="${tag}" tabindex="0" role="button" aria-pressed="false">${tag}</div>`
+        `<div class="skill-tag" data-tag="${escapeHtml(tag)}" tabindex="0" role="button" aria-pressed="false">${escapeHtml(tag)}</div>`
     ).join('');
     container.innerHTML = html;
 

@@ -15,17 +15,25 @@ document.addEventListener('DOMContentLoaded', initApp);
  */
 async function initApp() {
     try {
-        const response = await fetch('./data/data.json');
+        let data;
+        const dataScript = document.getElementById('portfolio-data');
 
-        if (!response.ok) {
-            throw new Error(`Failed to load portfolio data (HTTP ${response.status}). Please try again later.`);
+        if (dataScript) {
+            try {
+                data = JSON.parse(dataScript.textContent);
+            } catch (parseError) {
+                console.error('Embedded data corrupted:', parseError);
+            }
         }
 
-        let data;
-        try {
+        // Fallback to fetch if embedded data is missing/corrupted
+        if (!data) {
+            console.warn('Embedded data not found, falling back to fetch.');
+            const response = await fetch('./data/data.json');
+            if (!response.ok) {
+                throw new Error(`Failed to load portfolio data (HTTP ${response.status}).`);
+            }
             data = await response.json();
-        } catch (parseError) {
-            throw new Error('Portfolio data is corrupted. Please contact the site administrator.');
         }
 
         // Validate critical data

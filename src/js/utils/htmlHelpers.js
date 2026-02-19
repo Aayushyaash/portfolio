@@ -91,3 +91,21 @@ export function renderProjectLinks(githubLink, externalLink, iconSize = 'text-2x
 
     return html;
 }
+
+/**
+ * Sets text content of an element and removes aria-hidden if present.
+ * @param {string} selector - CSS selector.
+ * @param {string} value - Text value to set.
+ */
+export function setText(selector, value) {
+    const el = document.querySelector(selector);
+    if (!el) return;
+
+    // Set text (allow empty strings, but handle null/undefined as "")
+    el.textContent = value === null || value === undefined ? '' : value;
+
+    // Accessibility fix: Remove aria-hidden if content is being set
+    if (el.getAttribute('aria-hidden') === 'true') {
+        el.removeAttribute('aria-hidden');
+    }
+}

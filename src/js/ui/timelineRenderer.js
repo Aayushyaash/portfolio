@@ -173,7 +173,7 @@ function renderMilestoneContent(milestones) {
         const pane = clone.querySelector('.content-pane');
 
         pane.id = `pane-${id}`;
-        if (isActive) pane.classList.remove('hidden'); // Logic differs slightly from CSS class 'active', ensure compatibility
+        if (isActive) pane.classList.add('active'); // Logic matches CSS .content-pane.active { display: block; }
 
         // We need to render the INNER content into this pane
         renderMilestonePaneContent(pane, m, colors);

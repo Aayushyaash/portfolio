@@ -42,44 +42,51 @@ function renderTerminal(t) {
     const container = document.getElementById('terminal-content');
     if (!container || !t || !t.commands || t.commands.length === 0) return;
 
-    const safeHost = escapeHtml(t.host);
-    const safeInput0 = escapeHtml(t.commands[0].input);
-    const safeOutput0 = sanitize(t.commands[0].output);
+    container.innerHTML = ''; // Clear loading state
+    const template = document.getElementById('terminal-command-template');
+    if (!template) return;
 
-    let html = `
-    <div class="flex gap-3">
-        <span class="text-accent">visitor@${safeHost}:~</span>
-        <span class="text-white">${safeInput0}</span>
-    </div>
-    <div class="text-muted leading-relaxed">
-        <p>${safeOutput0}</p>
-    </div>
-    `;
+    t.commands.forEach((cmd, index) => {
+        const clone = template.content.cloneNode(true);
+        const hostEl = clone.querySelector('.terminal-prompt');
+        const inputEl = clone.querySelector('.terminal-input');
+        const outputEl = clone.querySelector('.terminal-output');
+        const outputContainer = clone.querySelector('.terminal-output-container');
+        const row = clone.querySelector('.command-row');
 
-    for (let i = 1; i < t.commands.length; i++) {
-        const cmd = t.commands[i];
-        const safeInput = escapeHtml(cmd.input);
-        const safeOutput = sanitize(cmd.output).replace(/\n/g, '<br/>');
+        if (hostEl) hostEl.textContent = `visitor@${t.host || 'guest'}:~`;
+        if (inputEl) inputEl.textContent = cmd.input;
 
-        html += `
-        <div class="flex gap-3 mt-4">
-            <span class="text-accent">visitor@${safeHost}:~</span>
-            <span class="text-white">${safeInput}</span>
-        </div>
-        <div class="text-muted">
-            <p class="mb-2 italic border-l-2 border-accentBlue/30 pl-4 text-accentBlue">${safeOutput}</p>
-        </div>
-        `;
+        // Output Handling (Sanitized HTML)
+        if (outputEl) {
+            outputEl.innerHTML = sanitize(cmd.output).replace(/\n/g, '<br/>');
+
+            // Special styling for the first generic welcome message (index 0)
+            if (index === 0) {
+                // Reset the "code block" style to be more like a text paragraph
+                outputEl.className = 'terminal-output text-muted leading-relaxed';
+                // Remove the left border container styling if present
+                if (outputEl.classList.contains('border-l-2')) {
+                    outputEl.classList.remove('italic', 'border-l-2', 'border-accentBlue/30', 'pl-4', 'text-accentBlue');
+                }
+            }
+        }
+
+        if (index === 0 && row) {
+            row.classList.remove('mt-4'); // Remove margin for the very first item
+        }
+
+        container.appendChild(clone);
+    });
+
+    // Add Active Cursor Line
+    const cursorTemplate = document.getElementById('terminal-cursor-template');
+    if (cursorTemplate) {
+        const cursorClone = cursorTemplate.content.cloneNode(true);
+        const cursorPrompt = cursorClone.querySelector('.terminal-prompt');
+        if (cursorPrompt) cursorPrompt.textContent = `visitor@${t.host || 'guest'}:~`;
+        container.appendChild(cursorClone);
     }
-
-    html += `
-    <div class="flex gap-3 mt-4">
-        <span class="text-accent">visitor@${safeHost}:~</span>
-        <span class="text-white animate-pulse">_</span>
-    </div>
-    `;
-
-    container.innerHTML = html;
 }
 
 /**

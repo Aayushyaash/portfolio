@@ -1,8 +1,24 @@
 /* Custom Styles derived from code.html template */
 
+:root {
+    /* Base Theme Colors */
+    --color-bg: #09090b;
+    --color-surface: #18181b;
+    --color-surface-highlight: #27272a;
+    --color-border: #3F3F46;
+    --color-muted: #A1A1AA;
+
+    /* Brand Colors */
+    --color-accent: #FACC15;
+    /* yellow-400 */
+    --color-accent-blue: #60A5FA;
+    /* blue-400 */
+    --color-text-main: #FAFAFA;
+}
+
 body {
-    background-color: #09090b;
-    color: #FAFAFA;
+    background-color: var(--color-bg);
+    color: var(--color-text-main);
 }
 
 ::-webkit-scrollbar {
@@ -33,7 +49,7 @@ body {
 
 .skill-tilt:hover {
     transform: rotate(0deg) translateY(-5px);
-    border-color: var(--accent-color);
+    border-color: var(--color-accent);
 }
 
 .skill-tilt {
@@ -43,7 +59,7 @@ body {
 
 /* Timeline milestone active states */
 .milestone-item.active {
-    border-left-color: var(--accent-color, #FACC15);
+    border-left-color: var(--color-accent, #FACC15);
     background-color: #27272a;
 }
 
@@ -52,7 +68,7 @@ body {
 }
 
 .milestone-item.active .milestone-org {
-    color: var(--accent-blue-color, #3B82F6);
+    color: var(--color-accent-blue, #3B82F6);
 }
 
 /* Timeline content pane fade animation */
@@ -200,14 +216,14 @@ body {
 }
 
 .skill-tag:hover {
-    border-color: var(--accent-color, #FACC15);
-    color: var(--accent-color, #FACC15);
+    border-color: var(--color-accent, #FACC15);
+    color: var(--color-accent, #FACC15);
 }
 
 .skill-tag.active {
-    border-color: var(--accent-color, #FACC15);
+    border-color: var(--color-accent, #FACC15);
     background-color: rgba(250, 204, 21, 0.1);
-    color: var(--accent-color, #FACC15);
+    color: var(--color-accent, #FACC15);
     box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.5);
 }
 
@@ -269,7 +285,7 @@ body {
 }
 
 .course-module:hover {
-    border-left-color: var(--accent-color, #FACC15);
+    border-left-color: var(--color-accent, #FACC15);
 }
 
 .course-module::before {
@@ -284,15 +300,15 @@ body {
 }
 
 .course-module:hover::before {
-    background-color: var(--accent-color, #FACC15);
+    background-color: var(--color-accent, #FACC15);
 }
 
 /* Skill card keyboard focus */
 .skill-tilt:focus-visible {
-    outline: 2px solid var(--accent-color, #FACC15);
+    outline: 2px solid var(--color-accent, #FACC15);
     outline-offset: 2px;
     transform: rotate(0deg) translateY(-5px);
-    border-color: var(--accent-color, #FACC15);
+    border-color: var(--color-accent, #FACC15);
 }
 
 /* Timeline milestone keyboard focus */

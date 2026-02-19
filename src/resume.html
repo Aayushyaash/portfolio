@@ -47,7 +47,6 @@
                     </div>
                     <div class="p-6 space-y-4" id="terminal-content">
                         <!-- Dynamic Terminal Content -->
-                        <div class="text-muted font-mono animate-pulse">Initializing session...</div>
                     </div>
                 </div>
             </div>
@@ -86,9 +85,6 @@
                         </h3>
                         <div id="resume-projects-container" class="grid grid-cols-1 gap-4">
                             <!-- Dynamic Content -->
-                            <div class="text-center p-8 border border-border rounded-lg border-dashed">
-                                <p class="text-muted text-sm font-mono animate-pulse">Loading verified projects...</p>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -128,6 +124,25 @@
         <!-- FOOTER_PARTIAL -->
     </main>
     <!-- Templates -->
+    <template id="terminal-command-template">
+        <div class="terminal-command-group">
+            <div class="flex gap-3 mt-4 command-row">
+                <span class="text-accent terminal-prompt">visitor@host:~</span>
+                <span class="text-white terminal-input"></span>
+            </div>
+            <div class="text-muted terminal-output-container">
+                <p class="mb-2 italic border-l-2 border-accentBlue/30 pl-4 text-accentBlue terminal-output"></p>
+            </div>
+        </div>
+    </template>
+
+    <template id="terminal-cursor-template">
+        <div class="flex gap-3 mt-4">
+            <span class="text-accent terminal-prompt"></span>
+            <span class="text-white animate-pulse">_</span>
+        </div>
+    </template>
+
     <template id="resume-project-template">
         <div
             class="bg-surface border border-border p-5 rounded-lg group hover:border-yellow-400/50 transition-all project-card">

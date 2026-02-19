@@ -1,0 +1,24 @@
+{
+    "nav": {
+        "activeClasses": [
+            "bg-surfaceHighlight/50",
+            "text-white",
+            "border-l-4",
+            "border-accent"
+        ],
+        "inactiveClasses": [
+            "text-muted",
+            "hover:bg-surfaceHighlight",
+            "hover:text-white",
+            "transition-all",
+            "group"
+        ],
+        "activeIcon": [
+            "text-accent"
+        ],
+        "inactiveIcon": [
+            "group-hover:text-accentBlue",
+            "transition-colors"
+        ]
+    }
+}

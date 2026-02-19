@@ -3,7 +3,7 @@
  * Handles DOM updates for profile, projects, and resume content.
  */
 
-import { escapeHtml, renderTags, renderProjectLinks } from '../utils/htmlHelpers.js';
+import { escapeHtml, renderTags, renderProjectLinks, sanitize, setText } from '../utils/htmlHelpers.js';
 
 /**
  * Renders user profile information.
@@ -24,19 +24,21 @@ export function renderProfile(profile) {
     setText('#nav-profile-subtitle', profile.subtitle);
 
     // Update Hero section
-    if (profile.hero) {
+    const heroTitleNode = document.getElementById('hero-title');
+    const heroTemplate = document.getElementById('hero-title-template');
 
-        const heroTitleNode = document.getElementById('hero-title');
-        if (heroTitleNode) {
-            const highlightText = profile.hero.highlight || "Code & Design";
-            const titleText = profile.hero.title || "Building the future with";
+    if (heroTitleNode && heroTemplate) {
+        const highlightText = profile.hero.highlight || "Code & Design";
+        const titleText = profile.hero.title || "Building the future with";
 
-            heroTitleNode.innerHTML = `
-                ${escapeHtml(titleText)} <br/>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-yellow-200 hero-title-highlight">${escapeHtml(highlightText)}</span>
-             `;
-        }
+        const clone = heroTemplate.content.cloneNode(true);
+        clone.querySelector('.hero-title-main').textContent = titleText;
+        clone.querySelector('.hero-title-highlight').textContent = highlightText;
+
+        heroTitleNode.innerHTML = '';
+        heroTitleNode.appendChild(clone);
     }
+
     setText('#hero-bio', profile.bio);
 
     // Update Colors
@@ -55,6 +57,7 @@ export function renderProfile(profile) {
 
     // Update Footer
     setText('#footer-year', new Date().getFullYear());
+    setText('#footer-profile-name', profile.name);
     const emailLink = document.querySelector('#contact-email-btn');
     if (emailLink && profile.social?.email) {
         emailLink.href = `mailto:${profile.social.email}`;
@@ -211,15 +214,7 @@ function createCompactProjectCard(project) {
 
 // Helpers
 
-/**
- * Sets text content of an element.
- * @param {string} selector - CSS selector.
- * @param {string} value - Text value to set.
- */
-function setText(selector, value) {
-    const el = document.querySelector(selector);
-    if (el && value) el.textContent = value;
-}
+
 
 /**
  * Updates the href attribute of an element.
@@ -231,6 +226,12 @@ export function updateLink(selector, url) {
     if (el && url && url !== '#') {
         el.href = url;
         el.style.display = '';
+
+        // Fix: Open external links in new tab
+        if (url.startsWith('http') || url.endsWith('.pdf')) {
+            el.target = '_blank';
+            el.rel = 'noopener noreferrer';
+        }
     } else if (el) {
         el.style.display = 'none';
     }
@@ -243,10 +244,10 @@ export function updateLink(selector, url) {
 export function applyTheme(profile) {
     if (profile && profile.colors) {
         if (profile.colors.accent) {
-            document.documentElement.style.setProperty('--accent-color', profile.colors.accent);
+            document.documentElement.style.setProperty('--color-accent', profile.colors.accent);
         }
         if (profile.colors.accentBlue) {
-            document.documentElement.style.setProperty('--accent-blue-color', profile.colors.accentBlue);
+            document.documentElement.style.setProperty('--color-accent-blue', profile.colors.accentBlue);
         }
     }
 }
