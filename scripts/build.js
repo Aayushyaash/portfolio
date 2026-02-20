@@ -125,6 +125,19 @@ async function build() {
                 if (domWindow.renderTimeline && data.timeline) domWindow.renderTimeline(data.timeline);
                 if (domWindow.applyTheme) domWindow.applyTheme(data.profile);
 
+                // Setup Resume Links
+                if (data.resume && data.resume.resumeFile && data.resume.resumeFile !== '#') {
+                    if (domWindow.updateLink) {
+                        domWindow.updateLink('#nav-social-resume', data.resume.resumeFile);
+                        domWindow.updateLink('#resume-download-btn', data.resume.resumeFile);
+                    }
+                } else {
+                    if (domWindow.updateLink) {
+                        domWindow.updateLink('#nav-social-resume', '');
+                        domWindow.updateLink('#resume-download-btn', '');
+                    }
+                }
+
                 // Set Title
                 if (data.profile.name) domWindow.document.title = `${data.profile.name} | Portfolio`;
             }
@@ -145,6 +158,19 @@ async function build() {
                 if (domWindow.renderResumeProjects) {
                     const featured = data.projects.filter(p => p.featured === true);
                     domWindow.renderResumeProjects(featured);
+                }
+
+                // Setup Resume Links
+                if (data.resume && data.resume.resumeFile && data.resume.resumeFile !== '#') {
+                    if (domWindow.updateLink) {
+                        domWindow.updateLink('#nav-social-resume', data.resume.resumeFile);
+                        domWindow.updateLink('#resume-download-btn', data.resume.resumeFile);
+                    }
+                } else {
+                    if (domWindow.updateLink) {
+                        domWindow.updateLink('#nav-social-resume', '');
+                        domWindow.updateLink('#resume-download-btn', '');
+                    }
                 }
 
                 if (data.profile.name) domWindow.document.title = `${data.profile.name} | Resume`;
@@ -221,10 +247,7 @@ async function build() {
         global.DOMPurify = undefined;
         // ------------------------------------
 
-        // Inject Data & Theme (Post-rendering, so they exist for client-side hydration)
-        const dataScript = `<script id="portfolio-data" type="application/json">${JSON.stringify(data)}</script>`;
-        html = html.replace('</head>', `${dataScript}\n</head>`);
-
+        // Inject Theme (Post-rendering, so it exists for client-side hydration)
         const themeScript = `<script>window.PORTFOLIO_THEME = ${JSON.stringify(theme)};</script>`;
         html = html.replace('</head>', `${themeScript}\n</head>`);
 

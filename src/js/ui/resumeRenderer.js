@@ -207,7 +207,7 @@ function renderEducation(edu) {
  * Replaces hover-only expand with accessible click-to-expand.
  * @param {HTMLElement} container - The education container element.
  */
-function setupCourseInteraction(container) {
+export function setupCourseInteraction(container) {
     container.addEventListener('click', (e) => {
         const module = e.target.closest('.course-module');
         if (!module) return;
