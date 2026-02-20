@@ -287,10 +287,8 @@ body {
     transition: all 0.15s ease;
 }
 
-@media (hover: hover) and (pointer: fine) {
-    .course-module:hover {
-        border-left-color: var(--color-accent, #FACC15);
-    }
+.course-module:hover {
+    border-left-color: var(--color-accent, #FACC15);
 }
 
 .course-module[aria-expanded="true"] {
@@ -308,10 +306,8 @@ body {
     background-color: #3F3F46;
 }
 
-@media (hover: hover) and (pointer: fine) {
-    .course-module:hover::before {
-        background-color: var(--color-accent, #FACC15);
-    }
+.course-module:hover::before {
+    background-color: var(--color-accent, #FACC15);
 }
 
 .course-module[aria-expanded="true"]::before {
