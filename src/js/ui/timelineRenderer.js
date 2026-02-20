@@ -381,6 +381,8 @@ function selectMilestone(id) {
     if (currentActive && inlinePane && currentActive !== inlinePane
         && window.innerWidth < 1024
         && currentActive.compareDocumentPosition(inlinePane) & Node.DOCUMENT_POSITION_FOLLOWING) {
+
+        // ... (scroll compensation logic omitted for brevity if not changing, but let's keep it safe) ...
         const menuItem = document.getElementById('menu-' + id);
         const anchorTop = menuItem ? menuItem.getBoundingClientRect().top : null;
 
