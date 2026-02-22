@@ -33,7 +33,7 @@ async function loadRendererScript(filePath) {
     if (!await fs.pathExists(filePath)) return '';
     let content = await fs.readFile(filePath, 'utf8');
     // Remove imports
-    content = content.replace(/import .* from .*/g, '');
+    content = content.replace(/^\s*import\s[\s\S]*?from\s+['"].*?['"]\s*;?\s*$/gm, '');
 
     // Convert "export function name(..." to "window.name = function name(..."
     content = content.replace(/export function (\w+)/g, 'window.$1 = function $1');
@@ -202,7 +202,9 @@ async function build() {
         // --- SSG Pre-rendering with JSDOM ---
         const virtualConsole = new VirtualConsole();
         virtualConsole.on("jsdomError", (e) => {
-            // Suppress benign CSS errors
+            // Only suppress CSS parsing errors (benign in JSDOM)
+            if (e.message && e.message.includes("Could not parse CSS")) return;
+            console.warn(`[JSDOM Warning] ${e.message || e}`);
         });
 
         // ENABLE SCRIPT EXECUTION
