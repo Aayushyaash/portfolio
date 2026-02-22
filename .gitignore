@@ -55,12 +55,11 @@ QWEN.md
 
 # Git Worktrees
 versions/
+.Worktrees/
 
 # Obsidian
 .obsidian/
 .smart-env/
 
 # Documentation
-.docs/
-docs\audit_report.md
-docs\implementation_plan.md
+docs/

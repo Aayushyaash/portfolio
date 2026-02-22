@@ -336,11 +336,13 @@ body {
     outline-offset: 2px;
     border-left-color: var(--color-accent, #FACC15);
 }
+
 /* Touch device: activate project window on tap */
 @media (hover: none) {
     .project-window-container.tapped .project-browser-window {
         transform: translateY(3rem);
     }
+
     .project-window-container.tapped {
         border-color: rgba(250, 204, 21, 0.3);
         background-color: rgba(250, 204, 21, 0.08);
@@ -363,4 +365,3 @@ body {
         border-color: var(--color-accent);
     }
 }
-EOF
