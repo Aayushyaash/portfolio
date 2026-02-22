@@ -9,6 +9,9 @@ const SRC_DIR = path.join(__dirname, '../src');
 const ASSETS_DIR = path.join(__dirname, '../assets');
 const DIST_DIR = path.join(__dirname, '../dist');
 
+// Site Configuration
+const SITE_URL = process.env.SITE_URL || 'https://aayushyaash.github.io/portfolio/';
+
 /**
  * Parses a markdown file with YAML frontmatter.
  */
@@ -24,13 +27,28 @@ function parseMarkdown(filePath) {
 }
 
 /**
+ * Validates required fields in content data.
+ * @param {object} data - Parsed frontmatter data.
+ * @param {string} filePath - Path to the source file.
+ * @param {string[]} required - Array of required field names.
+ */
+function validateContent(data, filePath, required = ['title', 'description']) {
+    if (!data) return;
+    const missing = required.filter(f => !data[f]);
+    if (missing.length > 0) {
+        console.warn(`[WARN] ${filePath} missing required fields: ${missing.join(', ')}`);
+    }
+}
+
+
+/**
  * Loads a JS file and strips ES Module syntax for execution in Node/JSDOM.
  */
 async function loadRendererScript(filePath) {
     if (!await fs.pathExists(filePath)) return '';
     let content = await fs.readFile(filePath, 'utf8');
     // Remove imports
-    content = content.replace(/import .* from .*/g, '');
+    content = content.replace(/^\s*import\s[\s\S]*?from\s+['"].*?['"]\s*;?\s*$/gm, '');
 
     // Convert "export function name(..." to "window.name = function name(..."
     content = content.replace(/export function (\w+)/g, 'window.$1 = function $1');
@@ -66,7 +84,10 @@ async function build() {
         for (const file of projectFiles) {
             if (file.endsWith('.md')) {
                 const projectData = parseMarkdown(path.join(projectsDir, file));
-                if (projectData) data.projects.push(projectData);
+                if (projectData) {
+                validateContent(projectData, file);
+                data.projects.push(projectData);
+            }
             }
         }
     }
@@ -125,6 +146,19 @@ async function build() {
                 if (domWindow.renderTimeline && data.timeline) domWindow.renderTimeline(data.timeline);
                 if (domWindow.applyTheme) domWindow.applyTheme(data.profile);
 
+                // Setup Resume Links
+                if (data.resume && data.resume.resumeFile && data.resume.resumeFile !== '#') {
+                    if (domWindow.updateLink) {
+                        domWindow.updateLink('#nav-social-resume', data.resume.resumeFile);
+                        domWindow.updateLink('#resume-download-btn', data.resume.resumeFile);
+                    }
+                } else {
+                    if (domWindow.updateLink) {
+                        domWindow.updateLink('#nav-social-resume', '');
+                        domWindow.updateLink('#resume-download-btn', '');
+                    }
+                }
+
                 // Set Title
                 if (data.profile.name) domWindow.document.title = `${data.profile.name} | Portfolio`;
             }
@@ -132,19 +166,32 @@ async function build() {
         'resume.html': {
             config: {
                 LOGO_HREF: 'index.html', LINK_PREFIX: 'index.html',
-                OVERVIEW_ACTIVE: NAV_THEME.inactiveClasses, OVERVIEW_ICON_CLASS: NAV_THEME.activeIcon,
+                OVERVIEW_ACTIVE: NAV_THEME.inactiveClasses, OVERVIEW_ICON_CLASS: NAV_THEME.inactiveIcon,
                 RESUME_ACTIVE: NAV_THEME.activeClasses, RESUME_ICON_CLASS: NAV_THEME.activeIcon, RESUME_HREF: '#',
                 TIMELINE_ACTIVE: NAV_THEME.inactiveClasses, TIMELINE_ICON_CLASS: NAV_THEME.inactiveIcon, TIMELINE_HREF: 'index.html#timeline'
             },
             render: (domWindow) => {
                 if (domWindow.renderProfile) domWindow.renderProfile(data.profile);
-                if (domWindow.renderResumePage) domWindow.renderResumePage(data.resume, data.profile);
+                if (domWindow.renderResumePage) domWindow.renderResumePage(data.resume);
                 if (domWindow.applyTheme) domWindow.applyTheme(data.profile);
                 // Fix: Call renderTimeline even if section is missing, to unhide the nav link
                 if (domWindow.renderTimeline && data.timeline) domWindow.renderTimeline(data.timeline);
                 if (domWindow.renderResumeProjects) {
                     const featured = data.projects.filter(p => p.featured === true);
                     domWindow.renderResumeProjects(featured);
+                }
+
+                // Setup Resume Links
+                if (data.resume && data.resume.resumeFile && data.resume.resumeFile !== '#') {
+                    if (domWindow.updateLink) {
+                        domWindow.updateLink('#nav-social-resume', data.resume.resumeFile);
+                        domWindow.updateLink('#resume-download-btn', data.resume.resumeFile);
+                    }
+                } else {
+                    if (domWindow.updateLink) {
+                        domWindow.updateLink('#nav-social-resume', '');
+                        domWindow.updateLink('#resume-download-btn', '');
+                    }
                 }
 
                 if (data.profile.name) domWindow.document.title = `${data.profile.name} | Resume`;
@@ -173,7 +220,9 @@ async function build() {
         // --- SSG Pre-rendering with JSDOM ---
         const virtualConsole = new VirtualConsole();
         virtualConsole.on("jsdomError", (e) => {
-            // Suppress benign CSS errors
+            // Only suppress CSS parsing errors (benign in JSDOM)
+            if (e.message && e.message.includes("Could not parse CSS")) return;
+            console.warn(`[JSDOM Warning] ${e.message || e}`);
         });
 
         // ENABLE SCRIPT EXECUTION
@@ -221,10 +270,7 @@ async function build() {
         global.DOMPurify = undefined;
         // ------------------------------------
 
-        // Inject Data & Theme (Post-rendering, so they exist for client-side hydration)
-        const dataScript = `<script id="portfolio-data" type="application/json">${JSON.stringify(data)}</script>`;
-        html = html.replace('</head>', `${dataScript}\n</head>`);
-
+        // Inject Theme (Post-rendering, so it exists for client-side hydration)
         const themeScript = `<script>window.PORTFOLIO_THEME = ${JSON.stringify(theme)};</script>`;
         html = html.replace('</head>', `${themeScript}\n</head>`);
 
@@ -240,6 +286,9 @@ async function build() {
             const styleTag = `<style id="theme-vars">${cssVars}</style>`;
             html = html.replace('</head>', `${styleTag}\n</head>`);
         }
+
+        // Replace hardcoded URLs with SITE_URL
+        html = html.replace(/https:\/\/aayushyaash\.github\.io\/portfolio\//g, SITE_URL);
 
         await fs.writeFile(path.join(DIST_DIR, page), html);
         console.log(`Generated ${page} (SSG Complete)`);
@@ -292,11 +341,14 @@ async function build() {
     await fs.ensureDir(dataDir);
     await fs.writeJson(path.join(dataDir, 'data.json'), data, { spaces: 2 });
     await fs.writeFile(path.join(DIST_DIR, '.nojekyll'), '');
-    await fs.writeFile(path.join(DIST_DIR, 'robots.txt'), 'User-agent: *\nAllow: /\nSitemap: https://aayushyaash.github.io/portfolio/sitemap.xml\n');
+    await fs.writeFile(path.join(DIST_DIR, 'robots.txt'), `User-agent: *
+Allow: /
+Sitemap: ${SITE_URL}sitemap.xml
+`);
     await fs.writeFile(path.join(DIST_DIR, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://aayushyaash.github.io/portfolio/</loc></url>
-  <url><loc>https://aayushyaash.github.io/portfolio/resume.html</loc></url>
+  <url><loc>${SITE_URL}</loc></url>
+  <url><loc>${SITE_URL}resume.html</loc></url>
 </urlset>`);
 
     console.log('Build complete - SSG Active.');

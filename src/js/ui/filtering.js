@@ -55,7 +55,10 @@ export function renderSkillsFilter(projects, experience, onFilterChange) {
 
     // 4. Listeners
     container.querySelectorAll('.skill-tag').forEach(tagEl => {
-        const handleInteraction = () => {
+        const handleInteraction = (e) => {
+            // Prevent event from bubbling or firing multiple times if touch vs click
+            if (e) e.preventDefault();
+
             const tag = tagEl.dataset.tag;
             if (tag === 'all') {
                 selectedTags.clear();
@@ -75,8 +78,7 @@ export function renderSkillsFilter(projects, experience, onFilterChange) {
         tagEl.addEventListener('click', handleInteraction);
         tagEl.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                handleInteraction();
+                handleInteraction(e);
             }
         });
     });
@@ -84,26 +86,31 @@ export function renderSkillsFilter(projects, experience, onFilterChange) {
     // --- Inner functions (closure-captured state) ---
 
     function updateFilterVisuals() {
+        const allTags = container.querySelectorAll('.skill-tag');
+
+        // 1. Reset ALL tags first
+        allTags.forEach(el => {
+            el.classList.remove('active');
+            el.setAttribute('aria-pressed', 'false');
+        });
+
         const allTag = container.querySelector('[data-tag="all"]');
+
+        // 2. Apply Active State
         if (selectedTags.size === 0) {
-            allTag.classList.add('active');
-            allTag.setAttribute('aria-pressed', 'true');
-            container.querySelectorAll('.skill-tag:not([data-tag="all"])').forEach(el => {
-                el.classList.remove('active');
-                el.setAttribute('aria-pressed', 'false');
-            });
+            // No specific tags selected -> "All" is active
+            if (allTag) {
+                allTag.classList.add('active');
+                allTag.setAttribute('aria-pressed', 'true');
+            }
         } else {
-            allTag.classList.remove('active');
-            container.querySelectorAll('.skill-tag:not([data-tag="all"])').forEach(el => {
+            // Specific tags selected
+            allTags.forEach(el => {
                 if (selectedTags.has(el.dataset.tag)) {
                     el.classList.add('active');
                     el.setAttribute('aria-pressed', 'true');
-                } else {
-                    el.classList.remove('active');
-                    el.setAttribute('aria-pressed', 'false');
                 }
             });
-            allTag.setAttribute('aria-pressed', 'false');
         }
     }
 

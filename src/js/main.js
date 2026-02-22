@@ -1,11 +1,10 @@
 /**
  * Main application entry point
  */
-import { renderProfile, renderProjects, applyTheme, updateLink } from './ui/renderer.js';
-import { renderResumePage, renderResumeProjects, renderResumeExperience } from './ui/resumeRenderer.js';
+import { renderResumeProjects, renderResumeExperience, setupCourseInteraction } from './ui/resumeRenderer.js';
 import { renderSkillsFilter } from './ui/filtering.js';
 import { setupNavigation } from './ui/navigation.js';
-import { renderTimeline, setupMilestoneInteraction } from './ui/timelineRenderer.js';
+import { setupMilestoneInteraction } from './ui/timelineRenderer.js';
 import { showError } from './utils/errorHandler.js';
 
 document.addEventListener('DOMContentLoaded', initApp);
@@ -15,89 +14,78 @@ document.addEventListener('DOMContentLoaded', initApp);
  */
 async function initApp() {
     try {
-        let data;
-        const dataScript = document.getElementById('portfolio-data');
-
-        if (dataScript) {
-            try {
-                data = JSON.parse(dataScript.textContent);
-            } catch (parseError) {
-                console.error('Embedded data corrupted:', parseError);
-            }
-        }
-
-        // Fallback to fetch if embedded data is missing/corrupted
-        if (!data) {
-            console.warn('Embedded data not found, falling back to fetch.');
-            const response = await fetch('./data/data.json');
-            if (!response.ok) {
-                throw new Error(`Failed to load portfolio data (HTTP ${response.status}).`);
-            }
-            data = await response.json();
-        }
-
-        // Validate critical data
-        if (!data.profile || !data.projects) {
-            throw new Error('Portfolio data is incomplete. Missing required sections.');
-        }
-
-        // 1. Render Core Views
-        // Always render to ensure data.json drives the content (CSR)
-        renderProfile(data.profile);
-        renderProjects(data.projects);
-
-        // Set page title from profile name
-        if (data.profile?.name) {
-            const isResumePage = document.getElementById('terminal-content');
-            document.title = isResumePage
-                ? `${data.profile.name} | Resume`
-                : `${data.profile.name} | Portfolio`;
-        }
-
-        // Render Timeline (if data exists)
-        if (data.timeline) {
-            renderTimeline(data.timeline);
+        // 1. Setup Interactive Handlers (DOM already rendered by SSG)
+        if (document.getElementById('timeline')) {
             setupMilestoneInteraction();
         }
 
-        // Ensure theme is applied
-        applyTheme(data.profile);
+        const eduContainer = document.getElementById('education-container');
+        if (eduContainer) {
+            setupCourseInteraction(eduContainer);
+        }
 
-        // 2. Render Resume/Filter specific views
+        // 2. Setup Resume/Filter specific views
         if (document.getElementById('skill-filters-container')) {
-            renderResumePage(data.resume);
-
-            // Initialize Filter with automatic updates to Resume sections
-            renderSkillsFilter(
-                data.projects,
-                data.resume?.experience,
-                (filteredProjects, filteredExperience) => {
-                    // Update UI when filter changes
-                    renderResumeProjects(filteredProjects);
-                    renderResumeExperience(filteredExperience);
+            try {
+                // Fetch filter data statically
+                const response = await fetch('./data/data.json');
+                if (!response.ok) {
+                    throw new Error(`Failed to load portfolio filter data (HTTP ${response.status}).`);
                 }
-            );
+                const data = await response.json();
 
-            // Initial render of filtered projects (featured only)
-            const featuredProjects = data.projects.filter(p => p.featured === true);
-            renderResumeProjects(featuredProjects);
+                // Initialize Filter with automatic updates to Resume sections
+                renderSkillsFilter(
+                    data.projects,
+                    data.resume?.experience,
+                    (filteredProjects, filteredExperience) => {
+                        // Update UI when filter changes
+                        renderResumeProjects(filteredProjects);
+                        renderResumeExperience(filteredExperience);
+                    }
+                );
+
+                // Initial render of filtered projects (featured only)
+                const featuredProjects = data.projects.filter(p => p.featured === true);
+                renderResumeProjects(featuredProjects);
+
+            } catch (filterError) {
+                console.error('Error loading filter data:', filterError);
+                showError('Failed to load filter options. Some interactive features may be unavailable.');
+            }
         }
 
-        // 3. Global Updates - Resume download link (single source: resume.md)
-        // 3. Global Updates - Resume download link (single source: resume.md)
-        if (data.resume?.resumeFile && data.resume.resumeFile !== '#') {
-            updateLink('#nav-social-resume', data.resume.resumeFile);
-            updateLink('#resume-download-btn', data.resume.resumeFile);
-        } else {
-            updateLink('#nav-social-resume', ''); // Hides if url is empty
-            updateLink('#resume-download-btn', '');
-        }
+        // 3. Global Updates - Links are now natively embedded by build.js during SSG phase
 
         // 4. Init Navigation interactions
         setupNavigation();
 
     } catch (error) {
-        console.error('Error loading portfolio data:', error);
+        console.error('Error initializing portfolio app:', error);
         showError(error.message || 'An unexpected error occurred while loading the portfolio.');
     }
 }
+
+/**
+ * Setup touch support for project cards on mobile devices
+ */
+function setupProjectCardTouch() {
+    if (!('ontouchstart' in window)) return;
+    
+    document.addEventListener('click', (e) => {
+        const container = e.target.closest('.project-window-container');
+        
+        // Remove tapped class from all other containers
+        document.querySelectorAll('.project-window-container.tapped').forEach(el => {
+            if (el !== container) el.classList.remove('tapped');
+        });
+        
+        // Toggle tapped class on clicked container
+        if (container) {
+            container.classList.toggle('tapped');
+        }
+    });
+}
+
+// Initialize touch support
+setupProjectCardTouch();

@@ -7,7 +7,7 @@ A static portfolio website. Content is managed via Markdown/YAML, built with a c
 -   **Data-Driven Content**: Profile and Project information are stored in `assets/` as Markdown files with YAML frontmatter.
 -   **Static Site Generation**: A custom build script (`scripts/build.js`) compiles assets into a static JSON structure, ensuring fast load times and no backend dependencies.
 -   **Responsive Design**: Mobile-first layout using Tailwind CSS, optimized for all devices.
--   **Automated Deployment**: configured with GitHub Actions to build and deploy to GitHub Pages on every push to `main`.
+-   **Automated Deployment**: Configured with GitHub Actions to build and deploy to GitHub Pages on every push to `prod`.
 
 ## Project Structure
 
@@ -90,14 +90,14 @@ order: 1
 
 The project is pre-configured for GitHub Pages.
 
-1.  Push your changes to the `main` branch.
+1.  Push your changes to the `prod` branch.
 2.  The **GitHub Action** (`.github/workflows/static.yml`) will automatically:
     -   Install dependencies.
     -   Run `npm run build`.
-    -   Deploy the `dist/` folder to the `gh-pages` branch.
+    -   Deploy the `dist/` folder to GitHub Pages.
 
 ## Tech Stack
 
--   **Generator**: Node.js, `fs-extra`, `js-yaml`, `glob`
--   **Styling**: Tailwind CSS (via CDN for simplicity, extensible to PostCSS)
+-   **Generator**: Node.js, `fs-extra`, `gray-matter`, `glob`, `jsdom`, `dompurify`
+-   **Styling**: Tailwind CSS (PostCSS build pipeline with Autoprefixer)
 -   **Frontend**: Vanilla JavaScript (ES6+)
