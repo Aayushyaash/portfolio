@@ -9,6 +9,9 @@ const SRC_DIR = path.join(__dirname, '../src');
 const ASSETS_DIR = path.join(__dirname, '../assets');
 const DIST_DIR = path.join(__dirname, '../dist');
 
+// Site Configuration
+const SITE_URL = process.env.SITE_URL || 'https://aayushyaash.github.io/portfolio/';
+
 /**
  * Parses a markdown file with YAML frontmatter.
  */
@@ -264,6 +267,9 @@ async function build() {
             html = html.replace('</head>', `${styleTag}\n</head>`);
         }
 
+        // Replace hardcoded URLs with SITE_URL
+        html = html.replace(/https:\/\/aayushyaash\.github\.io\/portfolio\//g, SITE_URL);
+
         await fs.writeFile(path.join(DIST_DIR, page), html);
         console.log(`Generated ${page} (SSG Complete)`);
     }
@@ -315,11 +321,14 @@ async function build() {
     await fs.ensureDir(dataDir);
     await fs.writeJson(path.join(dataDir, 'data.json'), data, { spaces: 2 });
     await fs.writeFile(path.join(DIST_DIR, '.nojekyll'), '');
-    await fs.writeFile(path.join(DIST_DIR, 'robots.txt'), 'User-agent: *\nAllow: /\nSitemap: https://aayushyaash.github.io/portfolio/sitemap.xml\n');
+    await fs.writeFile(path.join(DIST_DIR, 'robots.txt'), `User-agent: *
+Allow: /
+Sitemap: ${SITE_URL}sitemap.xml
+`);
     await fs.writeFile(path.join(DIST_DIR, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://aayushyaash.github.io/portfolio/</loc></url>
-  <url><loc>https://aayushyaash.github.io/portfolio/resume.html</loc></url>
+  <url><loc>${SITE_URL}</loc></url>
+  <url><loc>${SITE_URL}resume.html</loc></url>
 </urlset>`);
 
     console.log('Build complete - SSG Active.');
