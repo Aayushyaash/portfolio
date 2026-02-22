@@ -27,6 +27,21 @@ function parseMarkdown(filePath) {
 }
 
 /**
+ * Validates required fields in content data.
+ * @param {object} data - Parsed frontmatter data.
+ * @param {string} filePath - Path to the source file.
+ * @param {string[]} required - Array of required field names.
+ */
+function validateContent(data, filePath, required = ['title', 'description']) {
+    if (!data) return;
+    const missing = required.filter(f => !data[f]);
+    if (missing.length > 0) {
+        console.warn(`[WARN] ${filePath} missing required fields: ${missing.join(', ')}`);
+    }
+}
+
+
+/**
  * Loads a JS file and strips ES Module syntax for execution in Node/JSDOM.
  */
 async function loadRendererScript(filePath) {
@@ -69,7 +84,10 @@ async function build() {
         for (const file of projectFiles) {
             if (file.endsWith('.md')) {
                 const projectData = parseMarkdown(path.join(projectsDir, file));
-                if (projectData) data.projects.push(projectData);
+                if (projectData) {
+                validateContent(projectData, file);
+                data.projects.push(projectData);
+            }
             }
         }
     }
