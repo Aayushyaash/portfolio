@@ -74,11 +74,11 @@ body {
 /* Timeline content pane fade animation */
 .content-pane {
     display: none;
-    animation: fadeIn 0.3s ease-in-out;
 }
 
 .content-pane.active {
     display: block;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 @keyframes fadeIn {
