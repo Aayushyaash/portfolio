@@ -324,15 +324,15 @@ body {
 
 /* Timeline milestone keyboard focus */
 .milestone-item:focus-visible {
-    outline: 2px solid var(--accent-color, #FACC15);
+    outline: 2px solid var(--color-accent, #FACC15);
     outline-offset: -2px;
-    border-left-color: var(--accent-color, #FACC15);
+    border-left-color: var(--color-accent, #FACC15);
     background-color: #27272a;
 }
 
 /* Course module keyboard focus */
 .course-module:focus-visible {
-    outline: 2px solid var(--accent-color, #FACC15);
+    outline: 2px solid var(--color-accent, #FACC15);
     outline-offset: 2px;
-    border-left-color: var(--accent-color, #FACC15);
+    border-left-color: var(--color-accent, #FACC15);
 }

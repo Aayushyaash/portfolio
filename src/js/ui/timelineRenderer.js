@@ -95,10 +95,6 @@ export function setupMilestoneInteraction() {
  * Renders the left panel milestone menu items.
  * @param {Array} milestones - Array of milestone objects.
  */
-/**
- * Renders the left panel milestone menu items.
- * @param {Array} milestones - Array of milestone objects.
- */
 function renderMilestoneMenu(milestones) {
     const menu = document.getElementById('timeline-menu');
     if (!menu) return;
@@ -152,10 +148,6 @@ function renderMilestoneMenu(milestones) {
  * Renders the right panel content panes for all milestones.
  * @param {Array} milestones - Array of milestone objects.
  */
-/**
- * Renders the right panel content panes for all milestones.
- * @param {Array} milestones - Array of milestone objects.
- */
 function renderMilestoneContent(milestones) {
     const content = document.getElementById('timeline-content');
     if (!content) return;
@@ -182,12 +174,6 @@ function renderMilestoneContent(milestones) {
     });
 }
 
-/**
- * Renders the inner content of a milestone pane (without wrapper).
- * @param {object} milestone - Milestone data object.
- * @param {object} colors - Color mapping for this milestone.
- * @returns {string} HTML string.
- */
 /**
  * Renders the inner content of a milestone pane (without wrapper).
  * Appends to presentation container.

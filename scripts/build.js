@@ -145,13 +145,13 @@ async function build() {
         'resume.html': {
             config: {
                 LOGO_HREF: 'index.html', LINK_PREFIX: 'index.html',
-                OVERVIEW_ACTIVE: NAV_THEME.inactiveClasses, OVERVIEW_ICON_CLASS: NAV_THEME.activeIcon,
+                OVERVIEW_ACTIVE: NAV_THEME.inactiveClasses, OVERVIEW_ICON_CLASS: NAV_THEME.inactiveIcon,
                 RESUME_ACTIVE: NAV_THEME.activeClasses, RESUME_ICON_CLASS: NAV_THEME.activeIcon, RESUME_HREF: '#',
                 TIMELINE_ACTIVE: NAV_THEME.inactiveClasses, TIMELINE_ICON_CLASS: NAV_THEME.inactiveIcon, TIMELINE_HREF: 'index.html#timeline'
             },
             render: (domWindow) => {
                 if (domWindow.renderProfile) domWindow.renderProfile(data.profile);
-                if (domWindow.renderResumePage) domWindow.renderResumePage(data.resume, data.profile);
+                if (domWindow.renderResumePage) domWindow.renderResumePage(data.resume);
                 if (domWindow.applyTheme) domWindow.applyTheme(data.profile);
                 // Fix: Call renderTimeline even if section is missing, to unhide the nav link
                 if (domWindow.renderTimeline && data.timeline) domWindow.renderTimeline(data.timeline);
