@@ -1,0 +1,34 @@
+{
+    "nav": {
+        "activeClasses": [
+            "bg-surfaceHighlight/50",
+            "text-white",
+            "border-l-4",
+            "border-accent"
+        ],
+        "inactiveClasses": [
+            "text-muted",
+            "hover:bg-surfaceHighlight",
+            "hover:text-white",
+            "transition-all",
+            "group"
+        ],
+        "activeIcon": [
+            "text-accent"
+        ],
+        "inactiveIcon": [
+            "group-hover:text-accentBlue",
+            "transition-colors"
+        ]
+    },
+    "colors": {
+        "accent": "#FACC15",
+        "accent-blue": "#60A5FA",
+        "bg": "#09090b",
+        "surface": "#18181b",
+        "surface-highlight": "#27272a",
+        "border": "#3F3F46",
+        "muted": "#A1A1AA",
+        "text-main": "#FAFAFA"
+    }
+}
