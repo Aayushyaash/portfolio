@@ -65,3 +65,27 @@ async function initApp() {
         showError(error.message || 'An unexpected error occurred while loading the portfolio.');
     }
 }
+
+/**
+ * Setup touch support for project cards on mobile devices
+ */
+function setupProjectCardTouch() {
+    if (!('ontouchstart' in window)) return;
+    
+    document.addEventListener('click', (e) => {
+        const container = e.target.closest('.project-window-container');
+        
+        // Remove tapped class from all other containers
+        document.querySelectorAll('.project-window-container.tapped').forEach(el => {
+            if (el !== container) el.classList.remove('tapped');
+        });
+        
+        // Toggle tapped class on clicked container
+        if (container) {
+            container.classList.toggle('tapped');
+        }
+    });
+}
+
+// Initialize touch support
+setupProjectCardTouch();

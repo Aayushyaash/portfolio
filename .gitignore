@@ -55,3 +55,11 @@ QWEN.md
 
 # Git Worktrees
 versions/
+.Worktrees/
+
+# Obsidian
+.obsidian/
+.smart-env/
+
+# Documentation
+docs/

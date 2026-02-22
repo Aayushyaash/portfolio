@@ -9,7 +9,7 @@ module.exports = {
                 surfaceHighlight: '#27272a',
                 border: '#3F3F46',
                 muted: '#A1A1AA',
-                accent: 'var(--accent-color, #FACC15)',
+                accent: 'var(--color-accent, #FACC15)',
                 accentBlue: '#60A5FA',
             },
             fontFamily: {

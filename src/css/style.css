@@ -74,11 +74,11 @@ body {
 /* Timeline content pane fade animation */
 .content-pane {
     display: none;
-    animation: fadeIn 0.3s ease-in-out;
 }
 
 .content-pane.active {
     display: block;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 @keyframes fadeIn {
@@ -324,15 +324,44 @@ body {
 
 /* Timeline milestone keyboard focus */
 .milestone-item:focus-visible {
-    outline: 2px solid var(--accent-color, #FACC15);
+    outline: 2px solid var(--color-accent, #FACC15);
     outline-offset: -2px;
-    border-left-color: var(--accent-color, #FACC15);
+    border-left-color: var(--color-accent, #FACC15);
     background-color: #27272a;
 }
 
 /* Course module keyboard focus */
 .course-module:focus-visible {
-    outline: 2px solid var(--accent-color, #FACC15);
+    outline: 2px solid var(--color-accent, #FACC15);
     outline-offset: 2px;
-    border-left-color: var(--accent-color, #FACC15);
+    border-left-color: var(--color-accent, #FACC15);
+}
+
+/* Touch device: activate project window on tap */
+@media (hover: none) {
+    .project-window-container.tapped .project-browser-window {
+        transform: translateY(3rem);
+    }
+
+    .project-window-container.tapped {
+        border-color: rgba(250, 204, 21, 0.3);
+        background-color: rgba(250, 204, 21, 0.08);
+    }
+}
+
+/* Touch device: tech stack card tap border */
+@media (hover: none) {
+    .skill-tilt:active {
+        transform: translateY(-3px);
+        border-color: var(--color-accent);
+        background-color: rgba(250, 204, 21, 0.05);
+    }
+}
+
+/* Touch device: activate tech stack card border on tap */
+@media (hover: none) {
+    .skill-tilt:active {
+        transform: translateY(-3px);
+        border-color: var(--color-accent);
+    }
 }
