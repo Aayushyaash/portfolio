@@ -4,6 +4,7 @@ const glob = require('glob');
 const matter = require('gray-matter');
 const { JSDOM, VirtualConsole } = require('jsdom');
 const createDOMPurify = require('dompurify');
+const { validateProject, validateProfile } = require('./validation');
 
 const SRC_DIR = path.join(__dirname, '../src');
 const ASSETS_DIR = path.join(__dirname, '../assets');
@@ -23,20 +24,6 @@ function parseMarkdown(filePath) {
     } catch (e) {
         console.error(`Error parsing frontmatter in ${filePath}:`, e);
         return null;
-    }
-}
-
-/**
- * Validates required fields in content data.
- * @param {object} data - Parsed frontmatter data.
- * @param {string} filePath - Path to the source file.
- * @param {string[]} required - Array of required field names.
- */
-function validateContent(data, filePath, required = ['title', 'description']) {
-    if (!data) return;
-    const missing = required.filter(f => !data[f]);
-    if (missing.length > 0) {
-        console.warn(`[WARN] ${filePath} missing required fields: ${missing.join(', ')}`);
     }
 }
 
@@ -70,7 +57,10 @@ async function build() {
     const data = { profile: {}, projects: [], resume: {}, timeline: {} };
 
     const profilePath = path.join(ASSETS_DIR, 'profile.md');
-    if (await fs.pathExists(profilePath)) data.profile = parseMarkdown(profilePath);
+    if (await fs.pathExists(profilePath)) {
+        data.profile = parseMarkdown(profilePath);
+        validateProfile(data.profile, 'profile.md');
+    }
 
     const resumePath = path.join(ASSETS_DIR, 'resume.md');
     if (await fs.pathExists(resumePath)) data.resume = parseMarkdown(resumePath);
@@ -85,9 +75,9 @@ async function build() {
             if (file.endsWith('.md')) {
                 const projectData = parseMarkdown(path.join(projectsDir, file));
                 if (projectData) {
-                validateContent(projectData, file);
-                data.projects.push(projectData);
-            }
+                    validateProject(projectData, file);
+                    data.projects.push(projectData);
+                }
             }
         }
     }
@@ -300,7 +290,9 @@ async function build() {
     await fs.copy(path.join(SRC_DIR, 'css', 'style.css'), path.join(DIST_DIR, 'css', 'style.css'));
 
     // JS
-    const jsFiles = glob.sync('**/*.js', { cwd: path.join(SRC_DIR, 'js') });
+    const ssgOnlyFiles = ['ui/renderer.js', 'ui/timelineRenderer.js'];
+    const jsFiles = glob.sync('**/*.js', { cwd: path.join(SRC_DIR, 'js') })
+        .filter(f => !ssgOnlyFiles.includes(f));
     await fs.ensureDir(path.join(DIST_DIR, 'js'));
     for (const file of jsFiles) {
         await fs.copy(path.join(SRC_DIR, 'js', file), path.join(DIST_DIR, 'js', file));

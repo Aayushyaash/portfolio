@@ -175,7 +175,7 @@ function renderEducation(edu) {
     const courseTemplate = document.getElementById('course-item-template');
     (edu.courses || []).forEach(course => {
         const courseClone = courseTemplate.content.cloneNode(true);
-        courseClone.querySelector('.course-title').textContent = `${course.code}${course.title}`;
+        courseClone.querySelector('.course-title').textContent = `${course.code} — ${course.title}`;
 
         const detailsList = courseClone.querySelector('.course-details');
         (course.details || []).forEach(detail => {
@@ -198,8 +198,6 @@ function renderEducation(edu) {
     });
 
     container.appendChild(clone);
-
-    setupCourseInteraction(container);
 }
 
 /**

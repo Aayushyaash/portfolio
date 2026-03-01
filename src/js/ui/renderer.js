@@ -150,7 +150,7 @@ export function renderProjects(projects) {
  * Creates HTML for a single project card.
  * @param {object} project - Project data.
  * @param {number} index - Index for numbering.
- * @returns {string} HTML string.
+ * @returns {DocumentFragment|null} Cloned template content or null.
  */
 function createProjectCard(project, index) {
     const template = document.getElementById('project-card-template');
@@ -198,6 +198,11 @@ function createProjectCard(project, index) {
     return clone;
 }
 
+/**
+ * Creates HTML for a compact project card (used in Other Projects section).
+ * @param {object} project - Project data.
+ * @returns {DocumentFragment|null} Cloned template content or null.
+ */
 function createCompactProjectCard(project) {
     const template = document.getElementById('compact-project-card-template');
     if (!template) return null;

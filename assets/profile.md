@@ -22,7 +22,7 @@ location:
 image: "./images/profile-pic.jpeg"
 colors:
   accent: "#FACC15"
-  accentBlue: "#3B82F6"
+  accentBlue: "#60A5FA"
 hero:
   title: "Rapidly prototyping complex systems with"
   highlight: "Python & Applied AI"

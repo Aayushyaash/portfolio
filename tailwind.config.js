@@ -4,13 +4,13 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                bg: '#09090b',
-                surface: '#18181b',
-                surfaceHighlight: '#27272a',
-                border: '#3F3F46',
-                muted: '#A1A1AA',
+                bg: 'var(--color-bg, #09090b)',
+                surface: 'var(--color-surface, #18181b)',
+                surfaceHighlight: 'var(--color-surface-highlight, #27272a)',
+                border: 'var(--color-border, #3F3F46)',
+                muted: 'var(--color-muted, #A1A1AA)',
                 accent: 'var(--color-accent, #FACC15)',
-                accentBlue: '#60A5FA',
+                accentBlue: 'var(--color-accent-blue, #60A5FA)',
             },
             fontFamily: {
                 sans: ['Inter', 'system-ui', 'sans-serif'],

@@ -272,13 +272,8 @@ function renderBox(container, box, colors) {
 
 /**
  * Renders the links section at the bottom of a content pane.
+ * @param {HTMLElement} container - The container element to render links into.
  * @param {Array} links - Array of link objects with label, icon, iconType, url.
- * @returns {string} HTML string.
- */
-/**
- * Renders the links section at the bottom of a content pane.
- * @param {HTMLElement} container
- * @param {Array} links
  */
 function renderLinks(container, links) {
     if (!links || !Array.isArray(links) || links.length === 0) return;

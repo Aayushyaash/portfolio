@@ -60,6 +60,9 @@ async function initApp() {
         // 4. Init Navigation interactions
         setupNavigation();
 
+        // 5. Setup touch support for project cards
+        setupProjectCardTouch();
+
     } catch (error) {
         console.error('Error initializing portfolio app:', error);
         showError(error.message || 'An unexpected error occurred while loading the portfolio.');
@@ -86,6 +89,3 @@ function setupProjectCardTouch() {
         }
     });
 }
-
-// Initialize touch support
-setupProjectCardTouch();

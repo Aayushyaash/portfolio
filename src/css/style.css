@@ -349,19 +349,10 @@ body {
     }
 }
 
-/* Touch device: tech stack card tap border */
 @media (hover: none) {
     .skill-tilt:active {
         transform: translateY(-3px);
         border-color: var(--color-accent);
         background-color: rgba(250, 204, 21, 0.05);
-    }
-}
-
-/* Touch device: activate tech stack card border on tap */
-@media (hover: none) {
-    .skill-tilt:active {
-        transform: translateY(-3px);
-        border-color: var(--color-accent);
     }
 }

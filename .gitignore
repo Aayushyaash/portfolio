@@ -50,7 +50,6 @@ temp/
 .geminiignore
 GEMINI.md
 QWEN.md
-.qwen/
 .qwenignore
 
 # Git Worktrees
@@ -62,4 +61,6 @@ versions/
 .smart-env/
 
 # Documentation
-docs/
+docs/changelogs/
+docs/reports/
+*.resolved

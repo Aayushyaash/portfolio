@@ -8,9 +8,14 @@
     "build": "node scripts/build.js && npm run build:css",
     "dev": "npm run build && npx -y serve dist",
     "clean": "node -e \"require('fs-extra').removeSync('dist')\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "biome lint src/js scripts",
+    "lint:fix": "biome lint --write src scripts",
+    "format": "biome format --write src scripts",
+    "check": "biome check src scripts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
-  "author": "",
+  "author": "Aayush Yash",
   "license": "ISC",
   "dependencies": {
     "dompurify": "^3.3.1",
@@ -20,10 +25,12 @@
     "js-yaml": "^4.1.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.4",
     "autoprefixer": "^10.4.0",
     "jsdom": "^28.1.0",
     "postcss": "^8.4.0",
     "postcss-cli": "^11.0.0",
-    "tailwindcss": "^3.4.0"
+    "tailwindcss": "^3.4.0",
+    "vitest": "^4.0.18"
   }
 }
