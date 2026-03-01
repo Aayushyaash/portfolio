@@ -290,7 +290,7 @@ async function build() {
     await fs.copy(path.join(SRC_DIR, 'css', 'style.css'), path.join(DIST_DIR, 'css', 'style.css'));
 
     // JS
-    const ssgOnlyFiles = ['ui/renderer.js', 'ui/timelineRenderer.js'];
+    const ssgOnlyFiles = ['ui/renderer.js'];
     const jsFiles = glob.sync('**/*.js', { cwd: path.join(SRC_DIR, 'js') })
         .filter(f => !ssgOnlyFiles.includes(f));
     await fs.ensureDir(path.join(DIST_DIR, 'js'));
